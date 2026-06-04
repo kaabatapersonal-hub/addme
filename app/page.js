@@ -2,7 +2,8 @@
 
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
-import { useRef } from "react";
+import { useRef, useState, useEffect } from "react";
+import { supabase } from "@/lib/supabase";
 
 // ─── data ────────────────────────────────────────────────────────────────────
 
@@ -168,6 +169,15 @@ function ExampleCard({ card, index }) {
 // ─── page ─────────────────────────────────────────────────────────────────────
 
 export default function HomePage() {
+  const [cardCount, setCardCount] = useState(null);
+
+  useEffect(() => {
+    supabase
+      .from("cards")
+      .select("id", { count: "exact", head: true })
+      .then(({ count }) => { if (count) setCardCount(count); });
+  }, []);
+
   return (
     <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
 
@@ -208,16 +218,23 @@ export default function HomePage() {
         <div className="relative z-10 max-w-[640px] mx-auto w-full">
           {/* Badge */}
           <FadeUp delay={0}>
-            <span
-              className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full mb-6"
-              style={{
-                color: "#EC4899",
-                background: "rgba(236,72,153,0.1)",
-                border: "1px solid rgba(236,72,153,0.25)",
-              }}
-            >
-              ✦ Free forever · No signup needed
-            </span>
+            <div className="flex flex-col items-center gap-2 mb-6">
+              <span
+                className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full"
+                style={{
+                  color: "#EC4899",
+                  background: "rgba(236,72,153,0.1)",
+                  border: "1px solid rgba(236,72,153,0.25)",
+                }}
+              >
+                ✦ Free forever · No signup needed
+              </span>
+              {cardCount > 0 && (
+                <p className="text-[11px]" style={{ color: "rgba(148,163,184,0.6)" }}>
+                  🔥 {cardCount.toLocaleString()} cards created
+                </p>
+              )}
+            </div>
           </FadeUp>
 
           {/* Headline */}

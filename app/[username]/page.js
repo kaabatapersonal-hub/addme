@@ -225,8 +225,15 @@ export default async function CardPage({ params }) {
           </a>
         )}
 
+        {/* Views + edit */}
+        {(card.views > 0) && (
+          <p className="text-xs" style={{ color: "rgba(148,163,184,0.45)" }}>
+            👁 {card.views.toLocaleString()} view{card.views !== 1 ? "s" : ""}
+          </p>
+        )}
+
         {/* Growth loop */}
-        <div className="w-full mt-4">
+        <div className="w-full mt-2">
           <div
             className="w-full h-px mb-5"
             style={{ background: "rgba(255,255,255,0.07)" }}
@@ -239,6 +246,24 @@ export default async function CardPage({ params }) {
               style={{ color: "#EC4899" }}
             >
               Create it free →
+            </Link>
+          </p>
+          <p className="text-center text-xs mt-3" style={{ color: "rgba(148,163,184,0.35)" }}>
+            Is this your card?{" "}
+            <Link
+              href={`/edit/${card.username}`}
+              className="transition-opacity hover:opacity-80"
+              style={{ color: "rgba(236,72,153,0.5)" }}
+            >
+              Edit it
+            </Link>
+            {" · "}
+            <Link
+              href="/find"
+              className="transition-opacity hover:opacity-80"
+              style={{ color: "rgba(236,72,153,0.5)" }}
+            >
+              Find your card
             </Link>
           </p>
         </div>

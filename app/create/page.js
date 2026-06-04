@@ -328,6 +328,7 @@ function ImageUpload({ label = "Profile picture", preview, onChange }) {
   async function handleFile(e) {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (!file.type.startsWith("image/")) return;
     try {
       const compressed = await imageCompression(file, {
         maxSizeMB: 0.3,
@@ -466,9 +467,74 @@ function Step2({ mode, onChange }) {
   );
 }
 
+// ─── username field ───────────────────────────────────────────────────────────
+
+function validateUsernameFormat(u) {
+  if (u.length < 3 || u.length > 20) return false;
+  if (!/^[a-z0-9-]+$/.test(u)) return false;
+  if (u.startsWith("-") || u.endsWith("-")) return false;
+  return true;
+}
+
+function UsernameField({ value, status, onChange }) {
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "addme.app").replace(/^https?:\/\//, "");
+  return (
+    <div>
+      <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+        Your link
+      </label>
+      <div
+        className="flex items-center bg-[#111111] rounded-xl overflow-hidden transition-all duration-150"
+        style={{
+          border: status === "available"
+            ? "1px solid rgba(37,211,102,0.5)"
+            : status === "taken" || status === "invalid"
+            ? "1px solid rgba(248,113,113,0.5)"
+            : "1px solid rgba(255,255,255,0.1)",
+        }}
+      >
+        <span className="pl-4 text-sm flex-shrink-0 whitespace-nowrap" style={{ color: "rgba(255,255,255,0.3)" }}>
+          {baseUrl}/
+        </span>
+        <input
+          className="flex-1 py-3 px-1 text-sm text-white bg-transparent outline-none placeholder-white/25"
+          placeholder="yourname"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+        />
+        <div className="pr-4 pl-2 w-9 flex justify-center flex-shrink-0">
+          {status === "checking" && (
+            <div className="w-3.5 h-3.5 rounded-full border-2 border-[#EC4899] border-t-transparent animate-spin" />
+          )}
+          {status === "available" && (
+            <span className="text-base font-bold" style={{ color: "#25D366" }}>✓</span>
+          )}
+          {(status === "taken" || status === "invalid") && (
+            <span className="text-base font-bold" style={{ color: "#f87171" }}>✗</span>
+          )}
+        </div>
+      </div>
+      <div className="mt-1.5" style={{ minHeight: 18 }}>
+        {status === "taken" && (
+          <p className="text-xs" style={{ color: "#f87171" }}>That username is taken — try adding a number or letter.</p>
+        )}
+        {status === "invalid" && (
+          <p className="text-xs" style={{ color: "#f87171" }}>3–20 chars, lowercase letters, numbers, hyphens only.</p>
+        )}
+        {status === "available" && (
+          <p className="text-xs" style={{ color: "#25D366" }}>{baseUrl}/{value} is yours ✓</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ─── step 3 — personal ────────────────────────────────────────────────────────
 
-function Step3Personal({ mode, details, onChange }) {
+function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus, onChangeUsername }) {
   function set(field, val) {
     onChange({ ...details, [field]: val });
   }
@@ -498,6 +564,13 @@ function Step3Personal({ mode, details, onChange }) {
           onChange={(e) => set("name", e.target.value)}
         />
       </div>
+
+      {/* Username / link */}
+      <UsernameField
+        value={usernameInput}
+        status={usernameStatus}
+        onChange={onChangeUsername}
+      />
 
       {/* Phone */}
       <div>
@@ -571,7 +644,7 @@ function Step3Personal({ mode, details, onChange }) {
 
 // ─── step 3 — group ───────────────────────────────────────────────────────────
 
-function Step3Group({ details, onChange }) {
+function Step3Group({ details, onChange, usernameInput, usernameStatus, onChangeUsername }) {
   function set(field, val) {
     onChange({ ...details, [field]: val });
   }
@@ -598,6 +671,13 @@ function Step3Group({ details, onChange }) {
           onChange={(e) => set("groupName", e.target.value)}
         />
       </div>
+
+      {/* Username / link */}
+      <UsernameField
+        value={usernameInput}
+        status={usernameStatus}
+        onChange={onChangeUsername}
+      />
 
       <div>
         <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
@@ -885,7 +965,7 @@ function Step5({ details, cardType, mode, templateId, username }) {
         const { error: insertError } = await supabase.from("cards").insert({
           username: finalUsername,
           type: cardType,
-          mode: cardType === "personal" ? mode : null,
+          mode: cardType === "personal" ? mode : "group",
           name,
           bio,
           phone: details.phone || null,
@@ -1030,6 +1110,22 @@ function Step5({ details, cardType, mode, templateId, username }) {
           )}
         </button>
 
+        {/* Save link to own WhatsApp — most important action */}
+        {details.phone && (
+          <a
+            href={`https://wa.me/${details.phone.replace(/[\s+\-()]/g, "")}?text=${encodeURIComponent(`My AddMe card 🃏\n${cardUrl}\n\nShare it so people can add me on WhatsApp 🚀`)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full py-3.5 rounded-xl font-semibold text-white text-sm flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98]"
+            style={{ background: "#25D366" }}
+          >
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+            Save my link to WhatsApp
+          </a>
+        )}
+
         <div className="grid grid-cols-2 gap-3">
           {/* Share */}
           <button
@@ -1111,14 +1207,83 @@ export default function CreatePage() {
   });
   const [templateId, setTemplateId] = useState("classic-dark");
   const [username, setUsername] = useState("");
+  const [usernameInput, setUsernameInput] = useState("");
+  const [usernameStatus, setUsernameStatus] = useState("idle");
+  const usernameTimerRef = useRef(null);
+
+  async function checkUsernameAvailability(value) {
+    if (!validateUsernameFormat(value)) {
+      setUsernameStatus("invalid");
+      return;
+    }
+    setUsernameStatus("checking");
+    const { data } = await supabase
+      .from("cards")
+      .select("username")
+      .eq("username", value)
+      .maybeSingle();
+    setUsernameStatus((cur) => cur === "checking" ? (data ? "taken" : "available") : cur);
+  }
+
+  function scheduleCheck(value) {
+    clearTimeout(usernameTimerRef.current);
+    if (value.length >= 3) {
+      usernameTimerRef.current = setTimeout(() => checkUsernameAvailability(value), 600);
+    } else {
+      setUsernameStatus("idle");
+    }
+  }
+
+  function handleUsernameChange(value) {
+    const cleaned = value.toLowerCase().replace(/[^a-z0-9-]/g, "").slice(0, 20);
+    setUsernameInput(cleaned);
+    setUsernameStatus("idle");
+    scheduleCheck(cleaned);
+  }
+
+  // Auto-fill username from personal name (only when field is empty)
+  useEffect(() => {
+    if (cardType === "group" || usernameInput) return;
+    const base = (details.name || "")
+      .split(" ")[0]
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "")
+      .slice(0, 20);
+    if (base.length >= 2) {
+      setUsernameInput(base);
+      scheduleCheck(base);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [details.name]);
+
+  // Auto-fill username from group name (only when field is empty)
+  useEffect(() => {
+    if (cardType !== "group" || usernameInput) return;
+    const base = (details.groupName || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]/g, "")
+      .slice(0, 20);
+    if (base.length >= 2) {
+      setUsernameInput(base);
+      scheduleCheck(base);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [details.groupName]);
+
+  // Reset username when card type changes
+  useEffect(() => {
+    setUsernameInput("");
+    setUsernameStatus("idle");
+  }, [cardType]);
 
   function canContinue() {
     if (step === 1) return cardType !== null;
     if (step === 2) return mode !== null;
     if (step === 3) {
+      const uOk = usernameStatus === "available";
       if (cardType === "group")
-        return details.groupName.trim() !== "" && details.inviteLink.trim() !== "";
-      return details.name.trim() !== "" && details.phone.trim() !== "";
+        return details.groupName.trim() !== "" && details.inviteLink.trim() !== "" && uOk;
+      return details.name.trim() !== "" && details.phone.trim() !== "" && uOk;
     }
     return true;
   }
@@ -1128,10 +1293,7 @@ export default function CreatePage() {
     if (step === 1 && cardType === "group") {
       setStep(3);
     } else if (step === 4) {
-      if (!username) {
-        const base = cardType === "group" ? details.groupName : details.name;
-        setUsername(generateUsername(base));
-      }
+      setUsername(usernameInput);
       setStep(5);
     } else {
       setStep((s) => s + 1);
@@ -1177,10 +1339,19 @@ export default function CreatePage() {
                   mode={mode}
                   details={details}
                   onChange={setDetails}
+                  usernameInput={usernameInput}
+                  usernameStatus={usernameStatus}
+                  onChangeUsername={handleUsernameChange}
                 />
               )}
               {step === 3 && cardType === "group" && (
-                <Step3Group details={details} onChange={setDetails} />
+                <Step3Group
+                  details={details}
+                  onChange={setDetails}
+                  usernameInput={usernameInput}
+                  usernameStatus={usernameStatus}
+                  onChangeUsername={handleUsernameChange}
+                />
               )}
               {step === 4 && (
                 <Step4
