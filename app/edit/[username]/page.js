@@ -98,6 +98,11 @@ export default function EditPage({ params }) {
   const [saved, setSaved] = useState(false);
   const [saveError, setSaveError] = useState(null);
 
+  // Delete state
+  const [showDeleteZone, setShowDeleteZone] = useState(false);
+  const [deleteConfirmText, setDeleteConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+
   const imgInputRef = useRef(null);
 
   useEffect(() => {
@@ -181,6 +186,23 @@ export default function EditPage({ params }) {
       setSaveError(err?.message || "Save failed. Try again.");
     } finally {
       setSaving(false);
+    }
+  }
+
+  async function handleDelete() {
+    if (deleteConfirmText !== card.name || deleting) return;
+    setDeleting(true);
+    try {
+      // Remove image from storage
+      if (card.image_url) {
+        const ext = card.image_url.includes(".png") ? "png" : "jpg";
+        await supabase.storage.from("card-images").remove([`${username}.${ext}`]);
+      }
+      await supabase.from("cards").delete().eq("username", username);
+      window.location.href = "/?deleted=1";
+    } catch (err) {
+      setSaveError(err?.message || "Delete failed. Try again.");
+      setDeleting(false);
     }
   }
 
@@ -410,6 +432,59 @@ export default function EditPage({ params }) {
           >
             {saving ? "Saving..." : "Save changes"}
           </button>
+
+          {/* ── Danger zone ──────────────────────────────────── */}
+          <div style={{ borderTop: "1px solid var(--border)", paddingTop: 24, marginTop: 8 }}>
+            {!showDeleteZone ? (
+              <button
+                onClick={() => setShowDeleteZone(true)}
+                className="w-full py-3.5 rounded-2xl font-semibold text-sm transition-all duration-200 active:scale-[0.98]"
+                style={{ background: "rgba(239,68,68,0.08)", color: "#f87171", border: "1px solid rgba(239,68,68,0.18)" }}
+              >
+                🗑 Delete this card
+              </button>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <div className="rounded-2xl p-4" style={{ background: "rgba(239,68,68,0.07)", border: "1px solid rgba(239,68,68,0.18)" }}>
+                  <p className="font-bold text-sm mb-1" style={{ color: "#f87171" }}>Delete card permanently</p>
+                  <p className="text-xs leading-relaxed" style={{ color: "var(--fg-muted)" }}>
+                    This cannot be undone. Anyone with your link will see "Card not found."
+                  </p>
+                </div>
+                <p className="text-sm" style={{ color: "var(--fg-muted)" }}>
+                  Type <strong style={{ color: "var(--fg)" }}>{card.name}</strong> to confirm:
+                </p>
+                <input
+                  className="addme-input"
+                  placeholder={card.name}
+                  value={deleteConfirmText}
+                  onChange={(e) => setDeleteConfirmText(e.target.value)}
+                />
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => { setShowDeleteZone(false); setDeleteConfirmText(""); }}
+                    className="py-3.5 rounded-2xl font-semibold text-sm transition-all active:scale-[0.97]"
+                    style={{ background: "var(--bg-subtle)", color: "var(--fg-muted)", border: "1px solid var(--border)" }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleDelete}
+                    disabled={deleteConfirmText !== card.name || deleting}
+                    className="py-3.5 rounded-2xl font-bold text-sm transition-all active:scale-[0.97]"
+                    style={{
+                      background: deleteConfirmText === card.name ? "#EF4444" : "rgba(239,68,68,0.1)",
+                      color: deleteConfirmText === card.name ? "#fff" : "rgba(239,68,68,0.35)",
+                      cursor: deleteConfirmText === card.name ? "pointer" : "not-allowed",
+                      boxShadow: deleteConfirmText === card.name ? "0 4px 16px rgba(239,68,68,0.35)" : "none",
+                    }}
+                  >
+                    {deleting ? "Deleting..." : "Delete"}
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

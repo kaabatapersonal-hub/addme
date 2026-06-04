@@ -1,5 +1,6 @@
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
+import { ShareButton } from "@/components/ShareButton";
 
 function getSupabase() {
   return createClient(
@@ -91,6 +92,9 @@ export default async function CardPage({ params }) {
   const waHref = isGroup
     ? card.group_link
     : `https://wa.me/${convertForWa(card.phone || "")}`;
+
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "https://addme-app-silk.vercel.app").replace(/\/$/, "");
+  const cardUrl = `${baseUrl}/${username}`;
 
   const hasImage = Boolean(card.image_url);
 
@@ -208,6 +212,9 @@ export default async function CardPage({ params }) {
             {btnLabel}
           </a>
         )}
+
+        {/* Share button */}
+        <ShareButton url={cardUrl} name={displayName} />
 
         {/* Glass growth CTA */}
         <Link href="/create" style={{
