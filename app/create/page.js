@@ -113,6 +113,13 @@ const TEMPLATES = [
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
+function convertPhone(raw) {
+  let n = (raw || "").replace(/[\s\-\(\)\.]/g, "");
+  if (n.startsWith("+233")) n = n.slice(1);
+  else if (n.startsWith("0")) n = "233" + n.slice(1);
+  return n;
+}
+
 function shuffleArray(arr) {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
@@ -955,7 +962,7 @@ function Step5({ details, cardType, mode, templateId, username }) {
           mode: cardType === "personal" ? mode : "group",
           name,
           bio,
-          phone: details.phone || null,
+          phone: convertPhone(details.phone) || null,
           image_url: imageUrl,
           template: templateId,
           group_link: details.inviteLink || null,
@@ -1055,7 +1062,7 @@ function Step5({ details, cardType, mode, templateId, username }) {
         style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
       >
         <span className="text-sm flex-1 truncate font-mono" style={{ color: "var(--fg-muted)" }}>
-          {displayUrl}/<span className="text-white font-medium">{username}</span>
+          {displayUrl}/<span className="font-medium" style={{ color: "var(--fg)" }}>{username}</span>
         </span>
         <button
           onClick={handleCopy}

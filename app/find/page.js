@@ -11,8 +11,6 @@ function convertPhone(raw) {
   return n;
 }
 
-const inputCls =
-  "w-full bg-[#111111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 outline-none transition-all duration-150 focus:border-[#EC4899] focus:ring-1 focus:ring-[#EC4899]/25";
 
 export default function FindPage() {
   const [phone, setPhone] = useState("");
@@ -30,10 +28,15 @@ export default function FindPage() {
     setLoading(true);
     try {
       const converted = convertPhone(phone);
+      // Build alternate formats so existing cards with raw phones are also found
+      const raw = phone.trim().replace(/[\s\-\(\)\.]/g, "");
+      const local = raw.startsWith("233") ? "0" + raw.slice(3) : raw;
+      const intl = "+" + converted;
+
       const { data } = await supabase
         .from("cards")
         .select("username, name, bio, image_url, views, type, created_at")
-        .eq("phone", converted)
+        .in("phone", [converted, raw, local, intl])
         .order("created_at", { ascending: false });
       setCards(data || []);
       setSearched(true);
@@ -67,7 +70,7 @@ export default function FindPage() {
           Home
         </Link>
 
-        <h1 className="font-heading text-2xl font-bold text-white mb-1">
+        <h1 className="font-heading text-2xl font-bold mb-1" style={{ color: "var(--fg)" }}>
           Find my card 🔍
         </h1>
         <p className="text-sm mb-8" style={{ color: "var(--fg-muted)" }}>
@@ -105,7 +108,7 @@ export default function FindPage() {
             {cards.length === 0 ? (
               <div className="text-center py-10">
                 <div className="text-4xl mb-3">🤔</div>
-                <p className="font-semibold text-white mb-1">No card found</p>
+                <p className="font-semibold mb-1" style={{ color: "var(--fg)" }}>No card found</p>
                 <p className="text-sm mb-6" style={{ color: "var(--fg-muted)" }}>
                   No card was created with that number.
                 </p>
@@ -136,7 +139,7 @@ export default function FindPage() {
                     >
                       {/* Avatar */}
                       <div
-                        className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white flex-shrink-0"
+                        className="w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold text-white flex-shrink-0 overflow-hidden"
                         style={{
                           background: card.image_url
                             ? "transparent"
@@ -157,7 +160,7 @@ export default function FindPage() {
 
                       {/* Info */}
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-white text-sm truncate">
+                        <p className="font-semibold text-sm truncate" style={{ color: "var(--fg)" }}>
                           {card.name}
                         </p>
                         <p

@@ -28,8 +28,6 @@ const FREE_TEMPLATES = [
   { id: "minimal", name: "Minimal" },
 ];
 
-const inputCls =
-  "w-full bg-[#111111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 outline-none transition-all duration-150 focus:border-[#EC4899] focus:ring-1 focus:ring-[#EC4899]/25";
 
 // ─── bio grid (minimal) ───────────────────────────────────────────────────────
 
@@ -124,7 +122,7 @@ export default function EditPage({ params }) {
 
   function handleVerify() {
     const entered = convertPhone(verifyPhone);
-    const stored = card?.phone || "";
+    const stored = convertPhone(card?.phone || "");
     if (entered === stored) {
       setVerified(true);
       setVerifyError("");
@@ -173,7 +171,7 @@ export default function EditPage({ params }) {
 
       const { error } = await supabase
         .from("cards")
-        .update({ name, bio, phone: phone || null, template: templateId, image_url: imageUrl })
+        .update({ name, bio, phone: convertPhone(phone) || null, template: templateId, image_url: imageUrl })
         .eq("username", username);
 
       if (error) throw error;
@@ -192,7 +190,7 @@ export default function EditPage({ params }) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-5 text-center" style={{ background: "#080808" }}>
         <div className="text-4xl mb-3">👻</div>
-        <h1 className="font-heading text-xl font-bold text-white mb-2">Card not found</h1>
+        <h1 className="font-heading text-xl font-bold mb-2" style={{ color: "var(--fg)" }}>Card not found</h1>
         <p className="text-sm mb-6" style={{ color: "var(--fg-muted)" }}>
           We couldn't find a card at this URL.
         </p>
@@ -224,7 +222,7 @@ export default function EditPage({ params }) {
             Back to card
           </Link>
 
-          <h1 className="font-heading text-2xl font-bold text-white mb-1">Edit your card</h1>
+          <h1 className="font-heading text-2xl font-bold mb-1" style={{ color: "var(--fg)" }}>Edit your card</h1>
           <p className="text-sm mb-8" style={{ color: "var(--fg-muted)" }}>
             Enter the phone number on this card to verify it's yours.
           </p>
@@ -275,7 +273,7 @@ export default function EditPage({ params }) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-5 text-center" style={{ background: "#080808" }}>
         <div className="text-5xl mb-4">✅</div>
-        <h1 className="font-heading text-2xl font-bold text-white mb-2">Card updated!</h1>
+        <h1 className="font-heading text-2xl font-bold mb-2" style={{ color: "var(--fg)" }}>Card updated!</h1>
         <p className="text-sm mb-8" style={{ color: "var(--fg-muted)" }}>Your changes are live.</p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
           <Link href={`/${username}`} className="w-full py-3.5 rounded-xl font-semibold text-white text-sm text-center transition-all" style={{ background: "#EC4899" }}>
@@ -308,7 +306,7 @@ export default function EditPage({ params }) {
           Back to card
         </Link>
 
-        <h1 className="font-heading text-2xl font-bold text-white mb-1">Edit card</h1>
+        <h1 className="font-heading text-2xl font-bold mb-1" style={{ color: "var(--fg)" }}>Edit card</h1>
         <p className="text-sm mb-8" style={{ color: "var(--fg-muted)" }}>
           Changes go live immediately.
         </p>
@@ -339,7 +337,7 @@ export default function EditPage({ params }) {
               <div className="flex items-center gap-4 cursor-pointer" onClick={() => imgInputRef.current?.click()}>
                 <img src={imagePreview} alt="Preview" className="w-16 h-16 rounded-full object-cover" style={{ border: "2px solid #EC4899" }} />
                 <div>
-                  <p className="text-sm text-white font-medium">Photo uploaded ✓</p>
+                  <p className="text-sm font-medium" style={{ color: "var(--fg)" }}>Photo uploaded ✓</p>
                   <p className="text-xs mt-0.5" style={{ color: "var(--fg-muted)" }}>Tap to change</p>
                 </div>
               </div>
