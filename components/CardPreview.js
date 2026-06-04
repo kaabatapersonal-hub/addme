@@ -29,7 +29,8 @@ const CardPreview = forwardRef(function CardPreview(
     <div
       ref={ref}
       style={{
-        width: 340,
+        width: "100%",
+        maxWidth: 340,
         background: s.bg,
         border: s.border,
         boxShadow: `${s.shadow ? s.shadow + ", " : ""}0 0 0 1px rgba(236,72,153,0.18), 0 0 32px rgba(236,72,153,0.12)`,

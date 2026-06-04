@@ -169,7 +169,7 @@ function ExampleCard({ card, index }) {
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen overflow-x-hidden" style={{ background: "#080808" }}>
+    <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="relative flex flex-col items-center justify-center text-center min-h-[92vh] px-5 pt-24 pb-20">

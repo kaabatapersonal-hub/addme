@@ -1148,7 +1148,7 @@ export default function CreatePage() {
   }
 
   return (
-    <main className="min-h-screen" style={{ background: "#080808" }}>
+    <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
       <div className="max-w-lg mx-auto px-5 pt-14 pb-28">
         <ProgressBar step={step} />
 
