@@ -241,44 +241,60 @@ export default function HomePage() {
             </p>
           </FadeUp>
 
-          {/* CTA */}
+          {/* CTA — two paths */}
           <FadeUp delay={0.32}>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl mx-auto">
+              {/* Option 1 — Generate link */}
               <Link
-                href="/create"
-                className="group w-full sm:w-auto inline-flex items-center justify-center gap-2 font-semibold text-white px-8 py-3.5 rounded-xl text-[15px] transition-all duration-200 active:scale-[0.97]"
+                href="/generate"
+                className="block text-left p-5 rounded-2xl transition-all duration-200 active:scale-[0.98]"
                 style={{
-                  background: "#EC4899",
-                  boxShadow: "0 0 0 rgba(236,72,153,0)",
+                  background: "#1A1A1A",
+                  border: "1.5px solid rgba(255,255,255,0.08)",
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.boxShadow =
-                    "0 0 28px rgba(236,72,153,0.45)";
+                  e.currentTarget.style.borderColor = "rgba(236,72,153,0.3)";
+                  e.currentTarget.style.background = "rgba(236,72,153,0.05)";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.boxShadow =
-                    "0 0 0 rgba(236,72,153,0)";
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                  e.currentTarget.style.background = "#1A1A1A";
                 }}
               >
-                Create your card free
-                <svg
-                  className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  strokeWidth={2.5}
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
-                  />
-                </svg>
+                <div className="text-2xl mb-2.5">⚡</div>
+                <p className="font-semibold text-white text-[15px] leading-tight">
+                  Generate my WhatsApp link
+                </p>
+                <p className="text-xs mt-1.5 leading-relaxed" style={{ color: "#94A3B8" }}>
+                  Get a ready-to-share link with your bio. Send to friends to post on their status.
+                </p>
               </Link>
 
-              <span className="text-xs" style={{ color: "#94A3B8" }}>
-                Takes less than 60 seconds
-              </span>
+              {/* Option 2 — Create card */}
+              <Link
+                href="/create"
+                className="block text-left p-5 rounded-2xl transition-all duration-200 active:scale-[0.98]"
+                style={{
+                  background: "rgba(236,72,153,0.07)",
+                  border: "1.5px solid rgba(236,72,153,0.3)",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(236,72,153,0.6)";
+                  e.currentTarget.style.boxShadow = "0 0 20px rgba(236,72,153,0.12)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = "rgba(236,72,153,0.3)";
+                  e.currentTarget.style.boxShadow = "none";
+                }}
+              >
+                <div className="text-2xl mb-2.5">✨</div>
+                <p className="font-semibold text-white text-[15px] leading-tight">
+                  Create my AddMe card
+                </p>
+                <p className="text-xs mt-1.5 leading-relaxed" style={{ color: "#94A3B8" }}>
+                  Build a beautiful card page. Share your link everywhere.
+                </p>
+              </Link>
             </div>
           </FadeUp>
         </div>
