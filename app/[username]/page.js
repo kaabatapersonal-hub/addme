@@ -142,82 +142,61 @@ export default async function CardPage({ params }) {
   const btnLabel = isGroup ? "Join our WhatsApp Group" : "Add me on WhatsApp";
 
   return (
-    <main
-      style={{ background: "#080808", minHeight: "100vh" }}
-      className="flex flex-col items-center px-5 pt-16 pb-24"
-    >
-      <div className="w-full max-w-sm flex flex-col items-center gap-5">
+    <main style={{ background: "#080808", minHeight: "100vh" }} className="relative flex flex-col items-center px-5 pb-24 overflow-hidden">
+
+      {/* Background glow */}
+      <div className="absolute inset-x-0 top-0 h-72 pointer-events-none">
+        <div style={{
+          position: "absolute", top: "-30%", left: "50%", transform: "translateX(-50%)",
+          width: "140%", height: "100%",
+          background: "radial-gradient(ellipse at center, rgba(236,72,153,0.14) 0%, rgba(168,85,247,0.06) 45%, transparent 72%)",
+        }} />
+      </div>
+
+      <div className="relative z-10 w-full max-w-sm flex flex-col items-center pt-16 gap-0">
 
         {/* Avatar */}
-        <div
-          style={{
-            width: 108,
-            height: 108,
-            borderRadius: "50%",
-            border: "3px solid #EC4899",
-            boxShadow: "0 0 28px rgba(236,72,153,0.35)",
-            overflow: "hidden",
-            background: "linear-gradient(135deg, #EC4899 0%, #9d174d 100%)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-          }}
-        >
+        <div style={{
+          width: 110, height: 110, borderRadius: "50%",
+          border: "3px solid #EC4899",
+          boxShadow: "0 0 0 6px rgba(236,72,153,0.1), 0 0 40px rgba(236,72,153,0.3)",
+          overflow: "hidden",
+          background: "linear-gradient(135deg, #EC4899 0%, #9d174d 100%)",
+          display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+        }}>
           {card.image_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={card.image_url}
-              alt={displayName}
-              style={{ width: "100%", height: "100%", objectFit: "cover" }}
-            />
+            <img src={card.image_url} alt={displayName} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           ) : (
-            <span
-              style={{
-                color: "#ffffff",
-                fontSize: 44,
-                fontWeight: 700,
-                lineHeight: 1,
-                fontFamily: "var(--font-geist-sans), sans-serif",
-              }}
-            >
+            <span style={{ color: "#ffffff", fontSize: 46, fontWeight: 700, lineHeight: 1, fontFamily: "var(--font-geist-sans), sans-serif" }}>
               {initial}
             </span>
           )}
         </div>
 
-        {/* Name */}
-        <div className="text-center">
-          <h1
-            className="font-heading font-bold text-white leading-tight"
-            style={{ fontSize: 28 }}
-          >
+        {/* Name + bio */}
+        <div className="text-center mt-5 mb-6">
+          <h1 className="font-heading font-bold text-white leading-tight" style={{ fontSize: 30 }}>
             {displayName}
           </h1>
-
-          {/* Bio */}
           {card.bio && (
-            <p
-              className="mt-3 text-sm leading-relaxed"
-              style={{ color: "#94A3B8", maxWidth: 280, margin: "12px auto 0" }}
-            >
+            <p className="mt-3 text-[14px] leading-relaxed" style={{ color: "#94A3B8", maxWidth: 270, margin: "12px auto 0" }}>
               {card.bio}
             </p>
           )}
         </div>
 
-        {/* WhatsApp button */}
+        {/* WhatsApp CTA */}
         {waHref && (
           <a
             href={waHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full flex items-center justify-center gap-3 font-semibold text-white rounded-2xl transition-all duration-200 active:scale-[0.97] mt-2"
+            className="w-full flex items-center justify-center gap-3 font-bold text-white rounded-2xl transition-all duration-200 active:scale-[0.97]"
             style={{
               background: "#25D366",
-              padding: "16px 0",
-              fontSize: 16,
-              boxShadow: "0 4px 20px rgba(37,211,102,0.3)",
+              padding: "17px 0", fontSize: 16,
+              boxShadow: "0 8px 28px rgba(37,211,102,0.35)",
             }}
           >
             <WAIcon />
@@ -225,55 +204,43 @@ export default async function CardPage({ params }) {
           </a>
         )}
 
-        {/* Views + edit */}
-        {(card.views > 0) && (
-          <p className="text-xs" style={{ color: "rgba(148,163,184,0.45)" }}>
+        {/* Views */}
+        {card.views > 0 && (
+          <p className="text-xs mt-4" style={{ color: "rgba(148,163,184,0.4)" }}>
             👁 {card.views.toLocaleString()} view{card.views !== 1 ? "s" : ""}
           </p>
         )}
 
         {/* Growth loop */}
-        <div className="w-full mt-2">
-          <div
-            className="w-full h-px mb-5"
-            style={{ background: "rgba(255,255,255,0.07)" }}
-          />
-          <p className="text-center text-xs" style={{ color: "#94A3B8" }}>
-            Want your own card?{" "}
-            <Link
-              href="/create"
-              className="font-semibold transition-opacity hover:opacity-80"
-              style={{ color: "#EC4899" }}
-            >
-              Create it free →
-            </Link>
-          </p>
-          <p className="text-center text-xs mt-3" style={{ color: "rgba(148,163,184,0.35)" }}>
+        <div className="w-full mt-8">
+          <div className="w-full h-px mb-6" style={{ background: "rgba(255,255,255,0.06)" }} />
+
+          <Link
+            href="/create"
+            className="w-full flex items-center justify-center gap-2 font-bold text-white rounded-2xl transition-all duration-200 active:scale-[0.97] mb-3"
+            style={{
+              background: "linear-gradient(135deg, #EC4899 0%, #db2777 100%)",
+              padding: "15px 0", fontSize: 15,
+              boxShadow: "0 6px 22px rgba(236,72,153,0.3)",
+            }}
+          >
+            ✨ Create your own card — free
+          </Link>
+
+          <p className="text-center text-xs" style={{ color: "rgba(148,163,184,0.35)" }}>
             Is this your card?{" "}
-            <Link
-              href={`/edit/${card.username}`}
-              className="transition-opacity hover:opacity-80"
-              style={{ color: "rgba(236,72,153,0.5)" }}
-            >
+            <Link href={`/edit/${card.username}`} style={{ color: "rgba(236,72,153,0.55)" }}>
               Edit it
             </Link>
             {" · "}
-            <Link
-              href="/find"
-              className="transition-opacity hover:opacity-80"
-              style={{ color: "rgba(236,72,153,0.5)" }}
-            >
+            <Link href="/find" style={{ color: "rgba(236,72,153,0.55)" }}>
               Find your card
             </Link>
           </p>
         </div>
       </div>
 
-      {/* Footer */}
-      <footer
-        className="mt-auto pt-16 text-xs"
-        style={{ color: "rgba(148,163,184,0.3)" }}
-      >
+      <footer className="mt-auto pt-16 text-xs" style={{ color: "rgba(148,163,184,0.28)" }}>
         Made with SimoForge ⚡
       </footer>
     </main>

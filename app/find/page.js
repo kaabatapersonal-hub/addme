@@ -46,11 +46,15 @@ export default function FindPage() {
   }
 
   return (
-    <main
-      className="min-h-screen"
-      style={{ background: "#080808", overflowX: "hidden" }}
-    >
-      <div className="max-w-lg mx-auto px-5 pt-16 pb-24">
+    <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-56 overflow-hidden" style={{ zIndex: 0 }}>
+        <div style={{
+          position: "absolute", top: "-40%", left: "50%", transform: "translateX(-50%)",
+          width: "120%", height: "100%",
+          background: "radial-gradient(ellipse at center, rgba(236,72,153,0.09) 0%, transparent 70%)",
+        }} />
+      </div>
+      <div className="relative z-10 max-w-lg mx-auto px-5 pt-14 pb-24">
         {/* Back */}
         <Link
           href="/"
@@ -81,17 +85,14 @@ export default function FindPage() {
           <button
             type="submit"
             disabled={loading || !phone.trim()}
-            className="w-full py-3.5 rounded-xl font-semibold text-[15px] transition-all duration-200 active:scale-[0.98]"
+            className="w-full py-4 rounded-2xl font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
             style={{
-              background:
-                loading || !phone.trim()
-                  ? "rgba(255,255,255,0.07)"
-                  : "#EC4899",
-              color:
-                loading || !phone.trim()
-                  ? "rgba(255,255,255,0.3)"
-                  : "#ffffff",
+              background: loading || !phone.trim()
+                ? "rgba(255,255,255,0.06)"
+                : "linear-gradient(135deg, #EC4899 0%, #db2777 100%)",
+              color: loading || !phone.trim() ? "rgba(255,255,255,0.22)" : "#ffffff",
               cursor: loading || !phone.trim() ? "not-allowed" : "pointer",
+              boxShadow: loading || !phone.trim() ? "none" : "0 6px 24px rgba(236,72,153,0.32)",
             }}
           >
             {loading ? "Searching..." : "Find my card"}

@@ -113,28 +113,24 @@ const inputCls =
   "w-full bg-[#111111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 outline-none transition-all duration-150 focus:border-[#EC4899] focus:ring-1 focus:ring-[#EC4899]/25";
 
 function ProgressBar({ step, total = 7 }) {
+  const pct = Math.round(((step - 1) / (total - 1)) * 100);
   return (
-    <div className="flex items-center justify-center gap-1.5 mb-8">
-      {Array.from({ length: total }, (_, i) => i + 1).map((s, i) => (
-        <div key={s} className="flex items-center gap-1.5">
-          <div
-            className="w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold transition-all duration-300"
-            style={{
-              background: s === step ? "#EC4899" : s < step ? "rgba(236,72,153,0.25)" : "rgba(255,255,255,0.08)",
-              color: s === step ? "#fff" : s < step ? "#EC4899" : "rgba(255,255,255,0.3)",
-              transform: s === step ? "scale(1.15)" : "scale(1)",
-            }}
-          >
-            {s < step ? "✓" : s}
-          </div>
-          {i < total - 1 && (
-            <div
-              className="h-px w-3 transition-all duration-300"
-              style={{ background: s < step ? "rgba(236,72,153,0.35)" : "rgba(255,255,255,0.08)" }}
-            />
-          )}
-        </div>
-      ))}
+    <div className="mb-8">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[11px] font-semibold" style={{ color: "rgba(148,163,184,0.5)" }}>
+          Step {step} of {total}
+        </p>
+        <p className="text-[11px] font-bold" style={{ color: "#EC4899" }}>{pct}%</p>
+      </div>
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+        <motion.div
+          className="h-full rounded-full"
+          style={{ background: "linear-gradient(90deg, #EC4899 0%, #f472b6 100%)" }}
+          initial={false}
+          animate={{ width: `${pct}%` }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        />
+      </div>
     </div>
   );
 }
@@ -143,12 +139,10 @@ function BackBtn({ onClick }) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-1.5 text-sm mb-6 transition-colors"
-      style={{ color: "#94A3B8" }}
-      onMouseEnter={(e) => (e.currentTarget.style.color = "#fff")}
-      onMouseLeave={(e) => (e.currentTarget.style.color = "#94A3B8")}
+      className="inline-flex items-center gap-1.5 text-sm mb-6 font-medium transition-all duration-150 active:scale-95"
+      style={{ color: "rgba(148,163,184,0.6)" }}
     >
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
       Back
@@ -161,11 +155,14 @@ function ContinueBtn({ onClick, disabled, label = "Continue" }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="w-full py-3.5 rounded-xl font-semibold text-[15px] mt-6 transition-all duration-200 active:scale-[0.98]"
+      className="w-full py-4 rounded-2xl font-bold text-[15px] mt-6 transition-all duration-200 active:scale-[0.98]"
       style={{
-        background: disabled ? "rgba(255,255,255,0.07)" : "#EC4899",
-        color: disabled ? "rgba(255,255,255,0.25)" : "#fff",
+        background: disabled
+          ? "rgba(255,255,255,0.06)"
+          : "linear-gradient(135deg, #EC4899 0%, #db2777 100%)",
+        color: disabled ? "rgba(255,255,255,0.2)" : "#fff",
         cursor: disabled ? "not-allowed" : "pointer",
+        boxShadow: disabled ? "none" : "0 6px 24px rgba(236,72,153,0.32)",
       }}
     >
       {label}
@@ -389,7 +386,7 @@ function Step2({ name, phone, bio, onNext }) {
         className="w-full py-3.5 rounded-xl font-semibold text-[15px] flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98]"
         style={{ background: "#EC4899", color: "#fff" }}
       >
-        Now see how to share it
+        Now add your photo or video to the link 📸
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
         </svg>
@@ -486,37 +483,38 @@ function GuideCard({ guide, onNext, mockText }) {
 
 function Step7({ onReset }) {
   return (
-    <div className="flex flex-col items-center text-center gap-6 py-6">
-      <div className="text-8xl leading-none">🚀</div>
+    <div className="flex flex-col items-center text-center gap-5 py-4">
+      <div
+        className="w-20 h-20 rounded-3xl flex items-center justify-center text-4xl"
+        style={{ background: "linear-gradient(135deg, rgba(236,72,153,0.15) 0%, rgba(168,85,247,0.15) 100%)", border: "1px solid rgba(236,72,153,0.25)" }}
+      >
+        🚀
+      </div>
 
       <div>
         <h2 className="font-heading text-2xl font-bold text-white mb-2">
           You're all set!
         </h2>
-        <p className="text-sm leading-relaxed" style={{ color: "#94A3B8", maxWidth: 280, margin: "0 auto" }}>
-          Now go send it to your friends and watch the adds come in 😎
+        <p className="text-sm leading-relaxed" style={{ color: "#94A3B8", maxWidth: 260, margin: "0 auto" }}>
+          Go send it to your friends and watch the adds come in 😎
         </p>
       </div>
 
-      <div className="flex flex-col gap-3 w-full">
+      <div className="flex flex-col gap-3 w-full pt-2">
         <button
           onClick={onReset}
-          className="w-full py-3.5 rounded-xl font-semibold text-[15px] transition-all duration-200 active:scale-[0.98]"
-          style={{ background: "#EC4899", color: "#fff" }}
+          className="w-full py-4 rounded-2xl font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
+          style={{ background: "linear-gradient(135deg, #EC4899 0%, #db2777 100%)", color: "#fff", boxShadow: "0 6px 24px rgba(236,72,153,0.32)" }}
         >
           Generate another link
         </button>
 
         <Link
           href="/create"
-          className="w-full py-3.5 rounded-xl font-semibold text-[15px] flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98]"
-          style={{
-            background: "rgba(236,72,153,0.08)",
-            color: "#EC4899",
-            border: "1.5px solid rgba(236,72,153,0.35)",
-          }}
+          className="w-full py-4 rounded-2xl font-bold text-[15px] flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98]"
+          style={{ background: "rgba(236,72,153,0.08)", color: "#EC4899", border: "1.5px solid rgba(236,72,153,0.28)" }}
         >
-          Create an AddMe card instead →
+          Create a permanent card instead →
         </Link>
       </div>
     </div>
@@ -566,11 +564,16 @@ export default function GeneratePage() {
   const guideData = GUIDE_STEPS.find((g) => g.step === step);
 
   return (
-    <main
-      className="min-h-screen"
-      style={{ background: "#080808", overflowX: "hidden" }}
-    >
-      <div className="max-w-lg mx-auto px-5 pt-14 pb-28">
+    <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
+      {/* Top glow */}
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 overflow-hidden" style={{ zIndex: 0 }}>
+        <div style={{
+          position: "absolute", top: "-40%", left: "50%", transform: "translateX(-50%)",
+          width: "120%", height: "100%",
+          background: "radial-gradient(ellipse at center, rgba(236,72,153,0.09) 0%, transparent 70%)",
+        }} />
+      </div>
+      <div className="relative z-10 max-w-lg mx-auto px-5 pt-12 pb-28">
         <ProgressBar step={step} total={8} />
 
         <div className="relative overflow-hidden">

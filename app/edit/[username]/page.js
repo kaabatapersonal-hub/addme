@@ -243,11 +243,14 @@ export default function EditPage({ params }) {
             <button
               onClick={handleVerify}
               disabled={!verifyPhone.trim()}
-              className="w-full py-3.5 rounded-xl font-semibold text-[15px] transition-all duration-200"
+              className="w-full py-4 rounded-2xl font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
               style={{
-                background: verifyPhone.trim() ? "#EC4899" : "rgba(255,255,255,0.07)",
-                color: verifyPhone.trim() ? "#fff" : "rgba(255,255,255,0.25)",
+                background: verifyPhone.trim()
+                  ? "linear-gradient(135deg, #EC4899 0%, #db2777 100%)"
+                  : "rgba(255,255,255,0.06)",
+                color: verifyPhone.trim() ? "#fff" : "rgba(255,255,255,0.22)",
                 cursor: verifyPhone.trim() ? "pointer" : "not-allowed",
+                boxShadow: verifyPhone.trim() ? "0 6px 24px rgba(236,72,153,0.32)" : "none",
               }}
             >
               Verify &amp; Edit
@@ -290,7 +293,14 @@ export default function EditPage({ params }) {
 
   return (
     <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
-      <div className="max-w-lg mx-auto px-5 pt-14 pb-28">
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-56 overflow-hidden" style={{ zIndex: 0 }}>
+        <div style={{
+          position: "absolute", top: "-40%", left: "50%", transform: "translateX(-50%)",
+          width: "120%", height: "100%",
+          background: "radial-gradient(ellipse at center, rgba(236,72,153,0.09) 0%, transparent 70%)",
+        }} />
+      </div>
+      <div className="relative z-10 max-w-lg mx-auto px-5 pt-14 pb-28">
         <Link href={`/${username}`} className="inline-flex items-center gap-1.5 text-sm mb-6" style={{ color: "#94A3B8" }}>
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -390,11 +400,14 @@ export default function EditPage({ params }) {
           <button
             onClick={handleSave}
             disabled={saving || !name.trim()}
-            className="w-full py-3.5 rounded-xl font-semibold text-[15px] transition-all duration-200 active:scale-[0.98]"
+            className="w-full py-4 rounded-2xl font-bold text-[15px] transition-all duration-200 active:scale-[0.98]"
             style={{
-              background: saving || !name.trim() ? "rgba(255,255,255,0.07)" : "#EC4899",
-              color: saving || !name.trim() ? "rgba(255,255,255,0.25)" : "#fff",
+              background: saving || !name.trim()
+                ? "rgba(255,255,255,0.06)"
+                : "linear-gradient(135deg, #EC4899 0%, #db2777 100%)",
+              color: saving || !name.trim() ? "rgba(255,255,255,0.22)" : "#fff",
               cursor: saving || !name.trim() ? "not-allowed" : "pointer",
+              boxShadow: saving || !name.trim() ? "none" : "0 6px 24px rgba(236,72,153,0.32)",
             }}
           >
             {saving ? "Saving..." : "Save changes"}

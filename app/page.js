@@ -5,70 +5,14 @@ import Link from "next/link";
 import { useRef, useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
-// ─── data ────────────────────────────────────────────────────────────────────
-
-const steps = [
-  {
-    number: "01",
-    title: "Create",
-    desc: "Pick a template, upload your photo, and write your bio in seconds.",
-  },
-  {
-    number: "02",
-    title: "Share",
-    desc: "Download your card image and post it on your WhatsApp status.",
-  },
-  {
-    number: "03",
-    title: "Get Added",
-    desc: "People tap your link from the status and add you directly. Done.",
-  },
-];
-
-const exampleCards = [
-  {
-    name: "Zara Ahmed",
-    bio: "Just vibes, art & coffee ☕ | 21 | Lagos 🇳🇬",
-    initial: "Z",
-    avatarGradient: "linear-gradient(135deg, #fda4cf 0%, #EC4899 50%, #9d174d 100%)",
-    borderColor: "rgba(236, 72, 153, 0.45)",
-    glowColor: "rgba(236, 72, 153, 0.18)",
-    accentColor: "#EC4899",
-    label: "Personal",
-  },
-  {
-    name: "TasteKitchen",
-    bio: "Homemade meals delivered fresh daily 🍱 Order via WhatsApp.",
-    initial: "T",
-    avatarGradient: "linear-gradient(135deg, #fde68a 0%, #F59E0B 50%, #92400e 100%)",
-    borderColor: "rgba(245, 158, 11, 0.45)",
-    glowColor: "rgba(245, 158, 11, 0.15)",
-    accentColor: "#F59E0B",
-    label: "Business",
-  },
-  {
-    name: "Badminton Crew 🏸",
-    bio: "Weekly games every Sat @ KLCC court. All levels welcome. Join us!",
-    initial: "B",
-    avatarGradient: "linear-gradient(135deg, #a5b4fc 0%, #6366F1 50%, #312e81 100%)",
-    borderColor: "rgba(99, 102, 241, 0.45)",
-    glowColor: "rgba(99, 102, 241, 0.15)",
-    accentColor: "#6366F1",
-    label: "Group",
-    buttonLabel: "Join our Group",
-  },
-];
-
-// ─── animation helpers ────────────────────────────────────────────────────────
-
 const ease = [0.22, 1, 0.36, 1];
 
 function FadeUp({ children, delay = 0, className = "" }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 28 }}
+      initial={{ opacity: 0, y: 22 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.65, delay, ease }}
+      transition={{ duration: 0.6, delay, ease }}
       className={className}
     >
       {children}
@@ -78,13 +22,13 @@ function FadeUp({ children, delay = 0, className = "" }) {
 
 function ScrollFadeUp({ children, delay = 0, className = "" }) {
   const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-60px" });
+  const inView = useInView(ref, { once: true, margin: "-50px" });
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 32 }}
+      initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.65, delay, ease }}
+      transition={{ duration: 0.6, delay, ease }}
       className={className}
     >
       {children}
@@ -92,81 +36,69 @@ function ScrollFadeUp({ children, delay = 0, className = "" }) {
   );
 }
 
-// ─── WhatsApp icon ────────────────────────────────────────────────────────────
-
-function WAIcon({ className = "w-4 h-4" }) {
+function WAIcon({ size = 16 }) {
   return (
-    <svg className={className} fill="currentColor" viewBox="0 0 24 24">
+    <svg width={size} height={size} fill="currentColor" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
       <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
     </svg>
   );
 }
 
-// ─── example card component ───────────────────────────────────────────────────
-
-function ExampleCard({ card, index }) {
+function CardMockup() {
   return (
-    <ScrollFadeUp
-      delay={index * 0.1}
-      className="flex-shrink-0 w-[248px] sm:w-auto sm:flex-1"
+    <motion.div
+      animate={{ y: [0, -10, 0] }}
+      transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
+      style={{ display: "inline-block" }}
     >
       <div
-        className="relative rounded-2xl p-5 flex flex-col items-center gap-4 h-full"
         style={{
-          background: "#1A1A1A",
-          border: `1px solid ${card.borderColor}`,
-          boxShadow: `0 0 40px ${card.glowColor}`,
+          background: "linear-gradient(145deg, #161616 0%, #1c1c1c 100%)",
+          border: "1.5px solid rgba(236,72,153,0.4)",
+          borderRadius: 24,
+          padding: "22px 22px 18px",
+          boxShadow: "0 0 60px rgba(236,72,153,0.18), 0 28px 70px rgba(0,0,0,0.65)",
+          width: 210,
         }}
       >
-        {/* Template label */}
-        <span
-          className="absolute top-3 right-3 text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
-          style={{
-            background: `${card.accentColor}18`,
-            color: card.accentColor,
-            border: `1px solid ${card.accentColor}30`,
-          }}
-        >
-          {card.label}
-        </span>
-
-        {/* Avatar */}
-        <div
-          className="w-[68px] h-[68px] rounded-full flex items-center justify-center text-2xl font-bold text-white select-none"
-          style={{
-            background: card.avatarGradient,
-            boxShadow: `0 0 22px ${card.borderColor}`,
-          }}
-        >
-          {card.initial}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
+          <div style={{
+            width: 62, height: 62, borderRadius: "50%",
+            background: "linear-gradient(135deg, #EC4899 0%, #9d174d 100%)",
+            border: "3px solid #EC4899",
+            boxShadow: "0 0 24px rgba(236,72,153,0.5)",
+            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26,
+          }}>
+            🤳
+          </div>
         </div>
-
-        {/* Name + bio */}
-        <div className="text-center flex-1">
-          <p
-            className="font-heading font-bold text-base text-white leading-tight"
-          >
-            {card.name}
-          </p>
-          <p className="text-[13px] mt-2 leading-relaxed" style={{ color: "#94A3B8" }}>
-            {card.bio}
-          </p>
+        <p style={{ textAlign: "center", color: "#fff", fontWeight: 700, fontSize: 15, marginBottom: 5 }}>
+          Kwame Asante
+        </p>
+        <p style={{ textAlign: "center", color: "#94A3B8", fontSize: 11, lineHeight: 1.55, marginBottom: 16 }}>
+          Dev & designer 💻 · Accra 🇬🇭{"\n"}Always building something 🚀
+        </p>
+        <div style={{
+          background: "#25D366", borderRadius: 14, padding: "12px 0",
+          display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
+          boxShadow: "0 4px 18px rgba(37,211,102,0.32)",
+        }}>
+          <WAIcon size={14} />
+          <span style={{ color: "#fff", fontWeight: 600, fontSize: 13 }}>Add me on WhatsApp</span>
         </div>
-
-        {/* WhatsApp button */}
-        <div
-          className="w-full py-2.5 rounded-xl text-sm font-semibold text-white flex items-center justify-center gap-2"
-          style={{ background: "#25D366" }}
-        >
-          <WAIcon />
-          {card.buttonLabel ?? "Add on WhatsApp"}
-        </div>
+        <p style={{ textAlign: "center", color: "rgba(148,163,184,0.38)", fontSize: 10, marginTop: 11 }}>
+          👁 247 views
+        </p>
       </div>
-    </ScrollFadeUp>
+    </motion.div>
   );
 }
 
-// ─── page ─────────────────────────────────────────────────────────────────────
+const HOW_IT_WORKS = [
+  { n: "01", icon: "✏️", title: "Fill in your details", desc: "Name, photo, bio, phone number. Takes 30 seconds." },
+  { n: "02", icon: "📲", title: "Share your card", desc: "Post it on your WhatsApp status or send the link directly to friends." },
+  { n: "03", icon: "🎉", title: "People add you", desc: "They tap your link and add you instantly. No friction, no DMs needed." },
+];
 
 export default function HomePage() {
   const [cardCount, setCardCount] = useState(null);
@@ -181,280 +113,191 @@ export default function HomePage() {
   return (
     <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
 
-      {/* ── Hero ─────────────────────────────────────────────── */}
-      <section className="relative flex flex-col items-center justify-center text-center min-h-[92vh] px-5 pt-24 pb-20">
+      {/* ── Hero ──────────────────────────────────────────────────────── */}
+      <section className="relative flex flex-col items-center text-center px-5 pt-14 pb-16 min-h-[100dvh]">
 
-        {/* Animated glow blobs */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <motion.div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{
-              width: 560,
-              height: 560,
-              background:
-                "radial-gradient(circle, rgba(236,72,153,0.13) 0%, transparent 68%)",
-            }}
-            animate={{ scale: [1, 1.18, 1], opacity: [0.55, 1, 0.55] }}
-            transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute top-1/3 right-1/4 rounded-full"
-            style={{
-              width: 280,
-              height: 280,
-              background:
-                "radial-gradient(circle, rgba(236,72,153,0.07) 0%, transparent 70%)",
-            }}
-            animate={{ scale: [1.1, 1, 1.1], opacity: [0.3, 0.6, 0.3] }}
-            transition={{
-              duration: 7,
-              repeat: Infinity,
-              ease: "easeInOut",
-              delay: 1.5,
-            }}
-          />
+        {/* Glow backdrop */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div style={{
+            position: "absolute", top: "-5%", left: "50%", transform: "translateX(-50%)",
+            width: "160%", height: "55%",
+            background: "radial-gradient(ellipse at center, rgba(236,72,153,0.13) 0%, rgba(168,85,247,0.06) 45%, transparent 72%)",
+          }} />
         </div>
 
-        <div className="relative z-10 max-w-[640px] mx-auto w-full">
-          {/* Badge */}
+        <div className="relative z-10 w-full max-w-md mx-auto flex flex-col items-center">
+
+          {/* Trust chip */}
           <FadeUp delay={0}>
             <div className="flex flex-col items-center gap-2 mb-6">
               <span
-                className="inline-flex items-center gap-1.5 text-[11px] font-semibold px-3 py-1 rounded-full"
-                style={{
-                  color: "#EC4899",
-                  background: "rgba(236,72,153,0.1)",
-                  border: "1px solid rgba(236,72,153,0.25)",
-                }}
+                className="inline-flex items-center gap-1.5 text-[11px] font-bold px-4 py-1.5 rounded-full"
+                style={{ color: "#EC4899", background: "rgba(236,72,153,0.1)", border: "1px solid rgba(236,72,153,0.22)" }}
               >
                 ✦ Free forever · No signup needed
               </span>
               {cardCount > 0 && (
-                <p className="text-[11px]" style={{ color: "rgba(148,163,184,0.6)" }}>
-                  🔥 {cardCount.toLocaleString()} cards created
+                <p className="text-[12px] font-medium" style={{ color: "rgba(148,163,184,0.6)" }}>
+                  🔥 {cardCount.toLocaleString()} cards already created
                 </p>
               )}
             </div>
           </FadeUp>
 
           {/* Headline */}
-          <FadeUp delay={0.1}>
+          <FadeUp delay={0.08}>
             <h1
-              className="font-heading text-[2.6rem] sm:text-5xl md:text-[3.5rem] font-bold text-white leading-[1.08] tracking-tight"
+              className="font-heading font-bold text-white leading-[1.1] tracking-tight mb-4"
+              style={{ fontSize: "clamp(2.1rem, 8.5vw, 3.2rem)" }}
             >
-              Create your WhatsApp card{" "}
-              <span style={{ color: "#EC4899" }}>in seconds</span> ✨
+              Get people adding<br />
+              you on WhatsApp<br />
+              <span style={{
+                background: "linear-gradient(90deg, #EC4899 0%, #f472b6 100%)",
+                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              }}>every single day</span> 🚀
             </h1>
           </FadeUp>
 
-          {/* Subheadline */}
-          <FadeUp delay={0.2}>
-            <p
-              className="mt-5 text-base sm:text-lg leading-relaxed max-w-[420px] mx-auto"
-              style={{ color: "#94A3B8" }}
-            >
-              Make a beautiful add-me card with your picture and bio. Share it
-              on status. Get added.
+          {/* Sub */}
+          <FadeUp delay={0.14}>
+            <p className="text-[15px] leading-relaxed mb-8 max-w-[290px]" style={{ color: "#94A3B8" }}>
+              Create your card in seconds. Share once on status. Watch the adds come in.
             </p>
           </FadeUp>
 
-          {/* CTA — two paths */}
-          <FadeUp delay={0.32}>
-            <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-xl mx-auto">
-              {/* Option 1 — Generate link */}
-              <Link
-                href="/generate"
-                className="block text-left p-5 rounded-2xl transition-all duration-200 active:scale-[0.98]"
-                style={{
-                  background: "#1A1A1A",
-                  border: "1.5px solid rgba(255,255,255,0.08)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(236,72,153,0.3)";
-                  e.currentTarget.style.background = "rgba(236,72,153,0.05)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
-                  e.currentTarget.style.background = "#1A1A1A";
-                }}
-              >
-                <div className="text-2xl mb-2.5">⚡</div>
-                <p className="font-semibold text-white text-[15px] leading-tight">
-                  Generate my WhatsApp link
-                </p>
-                <p className="text-xs mt-1.5 leading-relaxed" style={{ color: "#94A3B8" }}>
-                  Get a ready-to-share link with your bio. Send to friends to post on their status.
-                </p>
-              </Link>
+          {/* Floating card mockup */}
+          <FadeUp delay={0.2}>
+            <div className="mb-9">
+              <CardMockup />
+            </div>
+          </FadeUp>
 
-              {/* Option 2 — Create card */}
+          {/* CTAs */}
+          <FadeUp delay={0.26}>
+            <div className="w-full flex flex-col gap-3">
+
               <Link
                 href="/create"
-                className="block text-left p-5 rounded-2xl transition-all duration-200 active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-2.5 font-bold text-white rounded-2xl transition-all duration-200 active:scale-[0.97]"
                 style={{
-                  background: "rgba(236,72,153,0.07)",
-                  border: "1.5px solid rgba(236,72,153,0.3)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(236,72,153,0.6)";
-                  e.currentTarget.style.boxShadow = "0 0 20px rgba(236,72,153,0.12)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = "rgba(236,72,153,0.3)";
-                  e.currentTarget.style.boxShadow = "none";
+                  background: "linear-gradient(135deg, #EC4899 0%, #db2777 100%)",
+                  padding: "17px 0", fontSize: 16,
+                  boxShadow: "0 8px 32px rgba(236,72,153,0.38)",
                 }}
               >
-                <div className="text-2xl mb-2.5">✨</div>
-                <p className="font-semibold text-white text-[15px] leading-tight">
-                  Create my AddMe card
-                </p>
-                <p className="text-xs mt-1.5 leading-relaxed" style={{ color: "#94A3B8" }}>
-                  Build a beautiful card page. Share your link everywhere.
-                </p>
+                ✨ Create my AddMe card
+              </Link>
+
+              <Link
+                href="/generate"
+                className="w-full flex items-center justify-center gap-2 font-semibold rounded-2xl transition-all duration-200 active:scale-[0.97]"
+                style={{
+                  background: "rgba(255,255,255,0.05)",
+                  border: "1.5px solid rgba(255,255,255,0.1)",
+                  color: "#e2e8f0", padding: "15px 0", fontSize: 15,
+                }}
+              >
+                ⚡ Just get my WhatsApp link
+              </Link>
+
+              <Link
+                href="/find"
+                className="flex items-center justify-center gap-1.5 text-sm font-medium transition-opacity active:opacity-60 mt-1"
+                style={{ color: "rgba(148,163,184,0.55)" }}
+              >
+                🔍 Already have a card? Find it →
               </Link>
             </div>
           </FadeUp>
         </div>
-
-        {/* Scroll cue */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-          animate={{ y: [0, 7, 0] }}
-          transition={{ duration: 2.2, repeat: Infinity, ease: "easeInOut" }}
-        >
-          <svg
-            className="w-5 h-5"
-            style={{ color: "rgba(148,163,184,0.3)" }}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 9l-7 7-7-7"
-            />
-          </svg>
-        </motion.div>
       </section>
 
-      {/* ── How It Works ─────────────────────────────────────── */}
-      <section className="px-5 pt-10 pb-24 max-w-4xl mx-auto">
-        <ScrollFadeUp className="text-center mb-14">
-          <p
-            className="text-[11px] font-bold uppercase tracking-[0.18em] mb-3"
-            style={{ color: "#EC4899" }}
-          >
+      {/* ── How it works ──────────────────────────────────────────────── */}
+      <section className="px-5 pb-20 max-w-lg mx-auto">
+        <ScrollFadeUp className="text-center mb-8">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-2.5" style={{ color: "#EC4899" }}>
             How it works
           </p>
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white">
+          <h2 className="font-heading text-[1.75rem] font-bold text-white">
             Three steps. That's it.
           </h2>
         </ScrollFadeUp>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5">
-          {steps.map((step, i) => (
-            <ScrollFadeUp key={step.number} delay={i * 0.1}>
+        <div className="flex flex-col gap-3">
+          {HOW_IT_WORKS.map((step, i) => (
+            <ScrollFadeUp key={step.n} delay={i * 0.07}>
               <div
-                className="relative rounded-2xl p-6 h-full transition-colors duration-300 group"
+                className="flex items-start gap-4 p-5 rounded-2xl"
                 style={{
-                  background: "#1A1A1A",
-                  border: "1px solid rgba(255,255,255,0.05)",
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor =
-                    "rgba(236,72,153,0.2)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor =
-                    "rgba(255,255,255,0.05)";
+                  background: "linear-gradient(135deg, #111111 0%, #0f0f0f 100%)",
+                  border: "1px solid rgba(255,255,255,0.06)",
                 }}
               >
-                <span
-                  className="text-[10px] font-bold tracking-widest"
-                  style={{ color: "rgba(236,72,153,0.55)" }}
+                <div
+                  className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+                  style={{ background: "rgba(236,72,153,0.1)", border: "1px solid rgba(236,72,153,0.18)" }}
                 >
-                  {step.number}
-                </span>
-                <h3 className="font-heading text-xl font-bold text-white mt-2">
-                  {step.title}
-                </h3>
-                <p
-                  className="text-[13px] mt-2 leading-relaxed"
-                  style={{ color: "#94A3B8" }}
-                >
-                  {step.desc}
-                </p>
-
-                {/* connector */}
-                {i < steps.length - 1 && (
-                  <div
-                    className="hidden sm:block absolute top-1/2 -right-3 w-6 h-px"
-                    style={{ background: "rgba(236,72,153,0.2)" }}
-                  />
-                )}
+                  {step.icon}
+                </div>
+                <div className="pt-0.5">
+                  <span className="text-[10px] font-black tracking-[0.15em]" style={{ color: "rgba(236,72,153,0.55)" }}>
+                    {step.n}
+                  </span>
+                  <p className="font-semibold text-white text-[15px] mt-0.5 mb-1">{step.title}</p>
+                  <p className="text-[13px] leading-relaxed" style={{ color: "#94A3B8" }}>{step.desc}</p>
+                </div>
               </div>
             </ScrollFadeUp>
           ))}
         </div>
       </section>
 
-      {/* ── Example Cards ────────────────────────────────────── */}
-      <section className="px-5 py-24 max-w-4xl mx-auto">
-        <ScrollFadeUp className="text-center mb-14">
-          <p
-            className="text-[11px] font-bold uppercase tracking-[0.18em] mb-3"
-            style={{ color: "#EC4899" }}
-          >
-            See it in action
-          </p>
-          <h2 className="font-heading text-3xl sm:text-4xl font-bold text-white">
-            Cards that get you added
-          </h2>
-          <p
-            className="text-sm mt-3 max-w-xs mx-auto"
-            style={{ color: "#94A3B8" }}
-          >
-            For friends, businesses, or groups — there's a card for everyone.
-          </p>
-        </ScrollFadeUp>
-
-        {/* horizontal scroll on mobile, grid on desktop */}
-        <div className="flex sm:grid sm:grid-cols-3 gap-4 overflow-x-auto sm:overflow-visible pb-3 sm:pb-0 -mx-5 sm:mx-0 px-5 sm:px-0 scrollbar-hide">
-          {exampleCards.map((card, i) => (
-            <ExampleCard key={card.name} card={card} index={i} />
-          ))}
-        </div>
-      </section>
-
-      {/* ── Bottom CTA ───────────────────────────────────────── */}
-      <section className="px-5 pb-24">
+      {/* ── Stats ────────────────────────────────────────────────────── */}
+      <section className="px-5 pb-20 max-w-lg mx-auto">
         <ScrollFadeUp>
           <div
-            className="max-w-lg mx-auto text-center rounded-2xl p-10 sm:p-12"
+            className="grid grid-cols-3 gap-px rounded-2xl overflow-hidden"
+            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.06)" }}
+          >
+            {[
+              { value: cardCount ? `${cardCount}+` : "—", label: "Cards created" },
+              { value: "Free", label: "Always" },
+              { value: "0", label: "Signups needed" },
+            ].map((s) => (
+              <div key={s.label} className="text-center py-5 px-2" style={{ background: "#0f0f0f" }}>
+                <p className="font-heading font-bold text-white text-xl">{s.value}</p>
+                <p className="text-[11px] mt-0.5" style={{ color: "rgba(148,163,184,0.55)" }}>{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </ScrollFadeUp>
+      </section>
+
+      {/* ── Bottom CTA ────────────────────────────────────────────────── */}
+      <section className="px-5 pb-24 max-w-md mx-auto">
+        <ScrollFadeUp>
+          <div
+            className="rounded-3xl p-8 text-center"
             style={{
-              background: "#1A1A1A",
-              border: "1px solid rgba(236,72,153,0.2)",
-              boxShadow: "0 0 60px rgba(236,72,153,0.07)",
+              background: "linear-gradient(145deg, #140a2a 0%, #1e0d42 100%)",
+              border: "1px solid rgba(168,85,247,0.22)",
+              boxShadow: "0 0 60px rgba(168,85,247,0.1)",
             }}
           >
-            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-white">
+            <div className="text-5xl mb-5">🚀</div>
+            <h2 className="font-heading text-[1.6rem] font-bold text-white mb-2 leading-tight">
               Ready to grow your WhatsApp?
             </h2>
-            <p className="text-sm mt-3 mb-7" style={{ color: "#94A3B8" }}>
-              Create your card in under a minute. Free forever.
+            <p className="text-sm mb-7" style={{ color: "#c4b5fd" }}>
+              Free forever. No account. No waiting.
             </p>
             <Link
               href="/create"
-              className="inline-flex items-center justify-center gap-2 font-semibold text-white px-8 py-3.5 rounded-xl text-[15px] transition-all duration-200"
-              style={{ background: "#EC4899" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow =
-                  "0 0 28px rgba(236,72,153,0.45)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "none";
+              className="inline-flex items-center gap-2 font-bold text-white px-8 py-4 rounded-2xl text-[15px] transition-all duration-200 active:scale-[0.97]"
+              style={{
+                background: "linear-gradient(135deg, #EC4899 0%, #db2777 100%)",
+                boxShadow: "0 8px 28px rgba(236,72,153,0.4)",
               }}
             >
               Get started free →
@@ -463,11 +306,7 @@ export default function HomePage() {
         </ScrollFadeUp>
       </section>
 
-      {/* ── Footer ───────────────────────────────────────────── */}
-      <footer
-        className="text-center py-8 text-xs"
-        style={{ color: "rgba(148,163,184,0.4)" }}
-      >
+      <footer className="text-center py-8 text-xs" style={{ color: "rgba(148,163,184,0.3)" }}>
         Made with SimoForge ⚡
       </footer>
     </main>

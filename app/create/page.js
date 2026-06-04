@@ -154,36 +154,25 @@ const inputCls =
 // ─── atoms ────────────────────────────────────────────────────────────────────
 
 function ProgressBar({ step }) {
+  const total = 5;
+  const pct = Math.round(((step - 1) / (total - 1)) * 100);
   return (
-    <div className="flex items-center justify-center gap-2 mb-8">
-      {[1, 2, 3, 4, 5].map((s, i) => (
-        <div key={s} className="flex items-center gap-2">
-          <div
-            className="w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-bold transition-all duration-300"
-            style={{
-              background:
-                s === step
-                  ? "#EC4899"
-                  : s < step
-                  ? "rgba(236,72,153,0.25)"
-                  : "rgba(255,255,255,0.08)",
-              color:
-                s === step ? "#ffffff" : s < step ? "#EC4899" : "rgba(255,255,255,0.3)",
-              transform: s === step ? "scale(1.12)" : "scale(1)",
-            }}
-          >
-            {s < step ? "✓" : s}
-          </div>
-          {i < 4 && (
-            <div
-              className="h-px w-5 transition-all duration-300"
-              style={{
-                background: s < step ? "rgba(236,72,153,0.35)" : "rgba(255,255,255,0.08)",
-              }}
-            />
-          )}
-        </div>
-      ))}
+    <div className="mb-8">
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-[11px] font-semibold" style={{ color: "rgba(148,163,184,0.5)" }}>
+          Step {step} of {total}
+        </p>
+        <p className="text-[11px] font-bold" style={{ color: "#EC4899" }}>{pct}%</p>
+      </div>
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+        <motion.div
+          className="h-full rounded-full"
+          style={{ background: "linear-gradient(90deg, #EC4899 0%, #f472b6 100%)" }}
+          initial={false}
+          animate={{ width: `${pct}%` }}
+          transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        />
+      </div>
     </div>
   );
 }
@@ -192,12 +181,10 @@ function BackBtn({ onClick }) {
   return (
     <button
       onClick={onClick}
-      className="flex items-center gap-1.5 text-sm mb-6 transition-colors"
-      style={{ color: "#94A3B8" }}
-      onMouseEnter={(e) => (e.currentTarget.style.color = "#ffffff")}
-      onMouseLeave={(e) => (e.currentTarget.style.color = "#94A3B8")}
+      className="inline-flex items-center gap-1.5 text-sm mb-6 font-medium transition-all duration-150 active:scale-95"
+      style={{ color: "rgba(148,163,184,0.6)" }}
     >
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
       </svg>
       Back
@@ -210,11 +197,14 @@ function ContinueBtn({ onClick, disabled }) {
     <button
       onClick={onClick}
       disabled={disabled}
-      className="w-full py-3.5 rounded-xl font-semibold text-[15px] mt-6 transition-all duration-200 active:scale-[0.98]"
+      className="w-full py-4 rounded-2xl font-bold text-[15px] mt-6 transition-all duration-200 active:scale-[0.98]"
       style={{
-        background: disabled ? "rgba(255,255,255,0.07)" : "#EC4899",
-        color: disabled ? "rgba(255,255,255,0.25)" : "#ffffff",
+        background: disabled
+          ? "rgba(255,255,255,0.06)"
+          : "linear-gradient(135deg, #EC4899 0%, #db2777 100%)",
+        color: disabled ? "rgba(255,255,255,0.2)" : "#ffffff",
         cursor: disabled ? "not-allowed" : "pointer",
+        boxShadow: disabled ? "none" : "0 6px 24px rgba(236,72,153,0.32)",
       }}
     >
       Continue
@@ -1311,7 +1301,14 @@ export default function CreatePage() {
 
   return (
     <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
-      <div className="max-w-lg mx-auto px-5 pt-14 pb-28">
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 overflow-hidden" style={{ zIndex: 0 }}>
+        <div style={{
+          position: "absolute", top: "-40%", left: "50%", transform: "translateX(-50%)",
+          width: "120%", height: "100%",
+          background: "radial-gradient(ellipse at center, rgba(236,72,153,0.09) 0%, transparent 70%)",
+        }} />
+      </div>
+      <div className="relative z-10 max-w-lg mx-auto px-5 pt-12 pb-28">
         <ProgressBar step={step} />
 
         {/* Overflow wrapper clips the slide animation */}
