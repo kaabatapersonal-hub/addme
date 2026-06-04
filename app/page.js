@@ -125,49 +125,44 @@ function RecentCards() {
         return (
           <div
             key={card.username}
-            className="rounded-2xl overflow-hidden flex flex-col"
-            style={{ background: "var(--bg-card)", border: "1px solid var(--border)", boxShadow: "var(--shadow)" }}
+            className="rounded-2xl overflow-hidden"
+            style={{
+              position: "relative",
+              aspectRatio: "3/4",
+              background: card.image_url
+                ? "#0a0a0a"
+                : "linear-gradient(160deg, #1a0533 0%, #6D28D9 55%, #EC4899 100%)",
+              boxShadow: "0 4px 20px rgba(0,0,0,0.14)",
+            }}
           >
-            {/* Avatar / photo */}
-            <div
-              className="w-full flex items-center justify-center"
-              style={{
-                height: 90,
-                background: card.image_url
-                  ? "transparent"
-                  : "linear-gradient(135deg, #EC4899 0%, #9d174d 100%)",
-                overflow: "hidden",
-              }}
-            >
-              {card.image_url ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={card.image_url} alt={card.name} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-              ) : (
-                <span style={{ color: "#fff", fontSize: 32, fontWeight: 700 }}>{initial}</span>
-              )}
-            </div>
-            {/* Info */}
-            <div className="p-3 flex flex-col gap-2 flex-1">
-              <p className="font-semibold text-[13px] leading-tight truncate" style={{ color: "var(--fg)" }}>
-                {card.name}
-              </p>
-              {card.bio && (
-                <p className="text-[11px] leading-relaxed line-clamp-2" style={{ color: "var(--fg-muted)" }}>
-                  {card.bio}
-                </p>
-              )}
+            {card.image_url && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={card.image_url} alt={card.name}
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+            )}
+            {!card.image_url && (
+              <div style={{
+                position: "absolute", top: "28%", left: "50%", transform: "translate(-50%,-50%)",
+                width: 48, height: 48, borderRadius: "50%",
+                background: "rgba(255,255,255,0.18)", border: "2px solid rgba(255,255,255,0.3)",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 20, fontWeight: 700, color: "#fff",
+              }}>{initial}</div>
+            )}
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "linear-gradient(to bottom, rgba(0,0,0,0) 25%, rgba(0,0,0,0.55) 58%, rgba(0,0,0,0.92) 100%)",
+            }} />
+            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 9px 9px" }}>
+              <a href={`/${card.username}`} style={{ textDecoration: "none", display: "block", marginBottom: 7 }}>
+                <p style={{ color: "#fff", fontWeight: 700, fontSize: 12, lineHeight: 1.3, marginBottom: 2, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{card.name}</p>
+                {card.bio && <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 10, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{card.bio}</p>}
+              </a>
               {waHref && (
-                <a
-                  href={waHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-auto flex items-center justify-center gap-1.5 rounded-xl py-2 text-[12px] font-bold text-white transition-all active:scale-95"
-                  style={{ background: "#25D366", textDecoration: "none" }}
-                >
-                  <svg width="12" height="12" fill="white" viewBox="0 0 24 24" style={{ flexShrink: 0 }}>
-                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                  </svg>
-                  {isGroup ? "Join Group" : "Add on WhatsApp"}
+                <a href={waHref} target="_blank" rel="noopener noreferrer"
+                  style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 4, background: "#25D366", color: "#fff", borderRadius: 9, padding: "8px 0", fontWeight: 700, fontSize: 11, textDecoration: "none", boxShadow: "0 2px 10px rgba(37,211,102,0.4)" }}>
+                  <svg width="11" height="11" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                  {isGroup ? "Join" : "Add on WhatsApp"}
                 </a>
               )}
             </div>

@@ -491,7 +491,7 @@ function UsernameField({ value, status, onChange }) {
           {baseUrl}/
         </span>
         <input
-          className="flex-1 py-3 px-1 text-sm bg-transparent outline-none" style={{ color: "var(--fg)" }}
+          className="flex-1 py-3 px-1 bg-transparent outline-none" style={{ color: "var(--fg)", fontSize: 16 }}
           placeholder="yourname"
           value={value}
           onChange={(e) => onChange(e.target.value)}
@@ -1019,21 +1019,29 @@ function Step5({ details, cardType, mode, templateId, username, isPublic }) {
       // Retry with a new username on conflict (duplicate)
       let finalUsername = username;
       for (let attempt = 0; attempt < 3; attempt++) {
-        const { error: insertError } = await supabase.from("cards").insert({
+        const cardData = {
           username: finalUsername,
           type: cardType,
           mode: cardType === "personal" ? mode : "group",
-          is_public: isPublic,
           name,
           bio,
           phone: convertPhone(details.phone) || null,
           image_url: imageUrl,
           template: templateId,
           group_link: details.inviteLink || null,
-        });
+        };
+
+        // Include is_public if the column exists (added via SQL migration)
+        let { error: insertError } = await supabase.from("cards").insert({ ...cardData, is_public: isPublic });
+
+        // If is_public column missing (migration not run yet), retry without it
+        if (insertError && insertError.message?.includes("is_public")) {
+          const result = await supabase.from("cards").insert(cardData);
+          insertError = result.error;
+        }
+
         if (!insertError) break;
         if (insertError.code === "23505") {
-          // unique violation — regenerate suffix and retry
           finalUsername = generateUsername(name);
         } else {
           throw insertError;
@@ -1221,13 +1229,20 @@ function Step5({ details, cardType, mode, templateId, username, isPublic }) {
         </div>
       </div>
 
-      {/* Nudge */}
-      <p className="text-xs text-center" style={{ color: "rgba(148,163,184,0.45)" }}>
+      <p className="text-xs text-center" style={{ color: "var(--fg-dim)" }}>
         Share your card with friends and ask them to post it on their status 👀
       </p>
-      <p className="text-[11px] text-center mt-1" style={{ color: "rgba(148,163,184,0.3)" }}>
-        Your page is live at {displayUrl}/<span style={{ color: "rgba(236,72,153,0.5)" }}>{username}</span>
+      <p className="text-[11px] text-center mt-1" style={{ color: "var(--fg-dim)" }}>
+        Your page is live at {displayUrl}/<span style={{ color: "#EC4899" }}>{username}</span>
       </p>
+
+      <Link
+        href="/"
+        className="block w-full py-3 mt-2 rounded-2xl font-medium text-[14px] text-center transition-all duration-200 active:scale-[0.98]"
+        style={{ color: "var(--fg-dim)" }}
+      >
+        ← Back to home
+      </Link>
 
       {saving && (
         <p className="text-xs text-center" style={{ color: "rgba(148,163,184,0.4)" }}>
@@ -1374,6 +1389,23 @@ export default function CreatePage() {
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "100%", background: "linear-gradient(to bottom, rgba(236,72,153,0.07) 0%, transparent 100%)" }} />
       </div>
       <div className="relative z-10 max-w-lg mx-auto px-5 pt-12 pb-28">
+        {/* Exit link — always visible so user is never trapped */}
+        <div className="flex items-center justify-between mb-3">
+          <Link
+            href="/"
+            className="text-sm font-medium flex items-center gap-1 transition-opacity hover:opacity-70"
+            style={{ color: "var(--fg-dim)" }}
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Exit
+          </Link>
+          <span className="text-[11px] font-medium" style={{ color: "var(--fg-dim)" }}>
+            {step < 5 ? `Step ${step} of 5` : "Card ready 🎉"}
+          </span>
+        </div>
+
         <ProgressBar step={step} />
         <div className="relative overflow-hidden">
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>

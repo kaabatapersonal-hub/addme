@@ -63,12 +63,14 @@ body {
   background: var(--input-bg);
   border: 1px solid var(--input-bdr);
   border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 14px;
+  padding: 14px 16px;
+  font-size: 16px; /* 16px minimum prevents iOS/Android auto-zoom on focus */
   color: var(--input-fg);
   outline: none;
   transition: border-color 150ms, box-shadow 150ms;
   font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .addme-input::placeholder { color: var(--input-ph); }
@@ -79,6 +81,11 @@ body {
 }
 
 textarea.addme-input { resize: none; }
+
+/* ── Mobile tap / touch polish ──────────────────────────── */
+* { -webkit-tap-highlight-color: transparent; }
+
+a, button { touch-action: manipulation; } /* removes 300ms tap delay on Android */
 
 /* ── Scrollbar ───────────────────────────────────────────── */
 ::-webkit-scrollbar { width: 6px; }

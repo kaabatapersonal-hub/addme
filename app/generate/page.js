@@ -515,6 +515,14 @@ function Step7({ onReset }) {
         >
           Create a permanent card instead →
         </Link>
+
+        <Link
+          href="/"
+          className="w-full py-3 rounded-2xl font-medium text-[14px] flex items-center justify-center transition-all duration-200 active:scale-[0.98]"
+          style={{ color: "var(--fg-dim)" }}
+        >
+          ← Back to home
+        </Link>
       </div>
     </div>
   );
@@ -571,6 +579,21 @@ export default function GeneratePage() {
         }} />
       </div>
       <div className="relative z-10 max-w-lg mx-auto px-5 pt-12 pb-28">
+        <div className="flex items-center justify-between mb-3">
+          <a
+            href="/"
+            className="text-sm font-medium flex items-center gap-1 transition-opacity hover:opacity-70"
+            style={{ color: "var(--fg-dim)", textDecoration: "none" }}
+          >
+            <svg style={{ width: 16, height: 16 }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            Exit
+          </a>
+          <span style={{ fontSize: 11, fontWeight: 500, color: "var(--fg-dim)" }}>
+            {step < 8 ? `Step ${step} of 8` : "All done 🎉"}
+          </span>
+        </div>
         <ProgressBar step={step} total={8} />
 
         <div className="relative overflow-hidden">
