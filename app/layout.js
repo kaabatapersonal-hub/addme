@@ -1,6 +1,8 @@
 import localFont from "next/font/local";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -26,19 +28,19 @@ export const metadata = {
     "Create a beautiful WhatsApp card with your photo, name, and bio. Share it anywhere and let people add you instantly.",
   openGraph: {
     title: "AddMe — Share your WhatsApp in style",
-    description:
-      "Create a beautiful WhatsApp card. Share it, get added instantly.",
+    description: "Create a beautiful WhatsApp card. Share it, get added instantly.",
     type: "website",
   },
 };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="dark">
-      <body
-        className={`${geistSans.variable} ${inter.variable} antialiased bg-background text-white min-h-screen`}
-      >
-        {children}
+    <html lang="en">
+      <body className={`${geistSans.variable} ${inter.variable} antialiased min-h-screen`}>
+        <ThemeProvider>
+          <ThemeToggle />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

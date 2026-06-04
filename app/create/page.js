@@ -148,8 +148,7 @@ const slideVariants = {
 
 // ─── shared input style ───────────────────────────────────────────────────────
 
-const inputCls =
-  "w-full bg-[#111111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 outline-none transition-all duration-150 focus:border-[#EC4899] focus:ring-1 focus:ring-[#EC4899]/25";
+const inputCls = "addme-input";
 
 // ─── atoms ────────────────────────────────────────────────────────────────────
 
@@ -218,7 +217,7 @@ function ChoiceCard({ icon, title, desc, selected, onClick }) {
       onClick={onClick}
       className="relative w-full text-left p-5 rounded-2xl transition-all duration-200"
       style={{
-        background: selected ? "rgba(236,72,153,0.13)" : "#1A1A1A",
+        background: selected ? "rgba(236,72,153,0.1)" : "var(--bg-card)",
         border: selected ? "2px solid #EC4899" : "2px solid rgba(255,255,255,0.07)",
         boxShadow: selected ? "0 0 24px rgba(236,72,153,0.18)" : "none",
       }}
@@ -242,7 +241,7 @@ function ChoiceCard({ icon, title, desc, selected, onClick }) {
       >
         {title}
       </p>
-      <p className="text-xs mt-2 leading-relaxed" style={{ color: "#94A3B8" }}>
+      <p className="text-xs mt-2 leading-relaxed" style={{ color: "var(--fg-muted)" }}>
         {desc}
       </p>
     </button>
@@ -270,7 +269,7 @@ function BioGrid({ mode, cardType, selectedBio, onSelect }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-2.5">
-        <p className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <p className="text-sm font-medium" style={{ color: "var(--fg-muted)" }}>
           Premade bios
         </p>
         <button
@@ -294,11 +293,9 @@ function BioGrid({ mode, cardType, selectedBio, onSelect }) {
               onClick={() => onSelect(bio.text)}
               className="text-left px-3.5 py-2.5 rounded-xl text-[13px] leading-relaxed transition-all duration-150"
               style={{
-                background: sel ? "rgba(236,72,153,0.1)" : "#0d0d0d",
-                border: sel
-                  ? "1px solid rgba(236,72,153,0.5)"
-                  : "1px solid rgba(255,255,255,0.06)",
-                color: sel ? "#ffffff" : "#94A3B8",
+                background: sel ? "rgba(236,72,153,0.1)" : "var(--bg-subtle)",
+                border: sel ? "1px solid rgba(236,72,153,0.45)" : "1px solid var(--border)",
+                color: sel ? "#EC4899" : "var(--fg-muted)",
               }}
             >
               {bio.text}
@@ -338,7 +335,7 @@ function ImageUpload({ label = "Profile picture", preview, onChange }) {
 
   return (
     <div>
-      <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+      <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
         {label}
       </label>
       {preview ? (
@@ -354,7 +351,7 @@ function ImageUpload({ label = "Profile picture", preview, onChange }) {
           />
           <div>
             <p className="text-sm text-white font-medium">Photo uploaded ✓</p>
-            <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>
+            <p className="text-xs mt-0.5" style={{ color: "var(--fg-muted)" }}>
               Tap to change
             </p>
           </div>
@@ -378,11 +375,11 @@ function ImageUpload({ label = "Profile picture", preview, onChange }) {
             className="w-10 h-10 rounded-full flex items-center justify-center"
             style={{ background: "rgba(255,255,255,0.05)" }}
           >
-            <svg className="w-5 h-5" style={{ color: "#94A3B8" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5" style={{ color: "var(--fg-muted)" }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
           </div>
-          <p className="text-sm" style={{ color: "#94A3B8" }}>
+          <p className="text-sm" style={{ color: "var(--fg-muted)" }}>
             Upload photo
           </p>
           <p className="text-xs" style={{ color: "rgba(255,255,255,0.2)" }}>
@@ -400,10 +397,10 @@ function ImageUpload({ label = "Profile picture", preview, onChange }) {
 function Step1({ cardType, onChange }) {
   return (
     <div>
-      <h2 className="font-heading text-2xl font-bold text-white mb-1">
+      <h2 className="font-heading text-2xl font-bold mb-1" style={{ color: "var(--fg)" }}>
         What are you creating?
       </h2>
-      <p className="text-sm mb-7" style={{ color: "#94A3B8" }}>
+      <p className="text-sm mb-7" style={{ color: "var(--fg-muted)" }}>
         Choose your card type
       </p>
       <div className="grid grid-cols-2 gap-4">
@@ -431,10 +428,10 @@ function Step1({ cardType, onChange }) {
 function Step2({ mode, onChange }) {
   return (
     <div>
-      <h2 className="font-heading text-2xl font-bold text-white mb-1">
+      <h2 className="font-heading text-2xl font-bold mb-1" style={{ color: "var(--fg)" }}>
         What's your vibe?
       </h2>
-      <p className="text-sm mb-7" style={{ color: "#94A3B8" }}>
+      <p className="text-sm mb-7" style={{ color: "var(--fg-muted)" }}>
         This helps us show you the right bios
       </p>
       <div className="grid grid-cols-2 gap-4">
@@ -470,7 +467,7 @@ function UsernameField({ value, status, onChange }) {
   const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "addme.app").replace(/^https?:\/\//, "");
   return (
     <div>
-      <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+      <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
         Your link
       </label>
       <div
@@ -532,10 +529,10 @@ function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus,
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="font-heading text-2xl font-bold text-white mb-1">
+        <h2 className="font-heading text-2xl font-bold mb-1" style={{ color: "var(--fg)" }}>
           Your details
         </h2>
-        <p className="text-sm" style={{ color: "#94A3B8" }}>
+        <p className="text-sm" style={{ color: "var(--fg-muted)" }}>
           {mode === "business"
             ? "Tell people about your business"
             : "Introduce yourself"}
@@ -544,7 +541,7 @@ function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus,
 
       {/* Name */}
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
           {mode === "business" ? "Name or business name" : "Name or nickname"}
         </label>
         <input
@@ -564,7 +561,7 @@ function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus,
 
       {/* Phone */}
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
           WhatsApp number
         </label>
         <input
@@ -579,7 +576,7 @@ function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus,
       {/* Second phone — business premium */}
       {mode === "business" && (
         <div>
-          <label className="flex items-center gap-2 text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+          <label className="flex items-center gap-2 text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
             Second phone number
             <span
               className="text-[9px] font-bold px-2 py-0.5 rounded-full"
@@ -611,7 +608,7 @@ function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus,
 
       {/* Bio grid + custom */}
       <div>
-        <label className="block text-sm font-medium mb-3" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <label className="block text-sm font-medium mb-3" style={{ color: "var(--fg-muted)" }}>
           {mode === "business" ? "Business bio" : "Your bio"}
         </label>
         <BioGrid
@@ -642,16 +639,16 @@ function Step3Group({ details, onChange, usernameInput, usernameStatus, onChange
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="font-heading text-2xl font-bold text-white mb-1">
+        <h2 className="font-heading text-2xl font-bold mb-1" style={{ color: "var(--fg)" }}>
           Your group details
         </h2>
-        <p className="text-sm" style={{ color: "#94A3B8" }}>
+        <p className="text-sm" style={{ color: "var(--fg-muted)" }}>
           Tell people what your group is about
         </p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
           Group name
         </label>
         <input
@@ -670,7 +667,7 @@ function Step3Group({ details, onChange, usernameInput, usernameStatus, onChange
       />
 
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
           Group description
         </label>
         <textarea
@@ -691,7 +688,7 @@ function Step3Group({ details, onChange, usernameInput, usernameStatus, onChange
       />
 
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
           WhatsApp group invite link
         </label>
         <input
@@ -703,7 +700,7 @@ function Step3Group({ details, onChange, usernameInput, usernameStatus, onChange
       </div>
 
       <div>
-        <label className="block text-sm font-medium mb-3" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <label className="block text-sm font-medium mb-3" style={{ color: "var(--fg-muted)" }}>
           Short tagline
         </label>
         <BioGrid
@@ -878,10 +875,10 @@ function Step4({ templateId, details, cardType, onChange }) {
 
   return (
     <div>
-      <h2 className="font-heading text-2xl font-bold text-white mb-1">
+      <h2 className="font-heading text-2xl font-bold mb-1" style={{ color: "var(--fg)" }}>
         Pick your template
       </h2>
-      <p className="text-sm mb-6" style={{ color: "#94A3B8" }}>
+      <p className="text-sm mb-6" style={{ color: "var(--fg-muted)" }}>
         Your card, your style
       </p>
 
@@ -1032,10 +1029,10 @@ function Step5({ details, cardType, mode, templateId, username }) {
   return (
     <div className="flex flex-col gap-6">
       <div className="text-center">
-        <h2 className="font-heading text-2xl font-bold text-white mb-1">
+        <h2 className="font-heading text-2xl font-bold mb-1" style={{ color: "var(--fg)" }}>
           Your card is ready! 🎉
         </h2>
-        <p className="text-sm" style={{ color: "#94A3B8" }}>
+        <p className="text-sm" style={{ color: "var(--fg-muted)" }}>
           Share it and start getting added
         </p>
       </div>
@@ -1055,9 +1052,9 @@ function Step5({ details, cardType, mode, templateId, username }) {
       {/* Link row */}
       <div
         className="flex items-center gap-2 rounded-xl px-4 py-3"
-        style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.07)" }}
+        style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
       >
-        <span className="text-sm flex-1 truncate font-mono" style={{ color: "#94A3B8" }}>
+        <span className="text-sm flex-1 truncate font-mono" style={{ color: "var(--fg-muted)" }}>
           {displayUrl}/<span className="text-white font-medium">{username}</span>
         </span>
         <button
@@ -1300,18 +1297,12 @@ export default function CreatePage() {
   }
 
   return (
-    <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
-      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 overflow-hidden" style={{ zIndex: 0 }}>
-        <div style={{
-          position: "absolute", top: "-40%", left: "50%", transform: "translateX(-50%)",
-          width: "120%", height: "100%",
-          background: "radial-gradient(ellipse at center, rgba(236,72,153,0.09) 0%, transparent 70%)",
-        }} />
+    <main className="min-h-screen" style={{ background: "var(--bg-page)", overflowX: "hidden" }}>
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-48 overflow-hidden" style={{ zIndex: 0 }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "100%", background: "linear-gradient(to bottom, rgba(236,72,153,0.07) 0%, transparent 100%)" }} />
       </div>
       <div className="relative z-10 max-w-lg mx-auto px-5 pt-12 pb-28">
         <ProgressBar step={step} />
-
-        {/* Overflow wrapper clips the slide animation */}
         <div className="relative overflow-hidden">
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>
             <motion.div
@@ -1376,10 +1367,7 @@ export default function CreatePage() {
         </div>
       </div>
 
-      <footer
-        className="text-center py-6 text-xs"
-        style={{ color: "rgba(148,163,184,0.3)" }}
-      >
+      <footer className="text-center py-6 text-xs" style={{ color: "var(--fg-dim)" }}>
         Made with SimoForge ⚡
       </footer>
     </main>

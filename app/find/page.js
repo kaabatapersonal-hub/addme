@@ -46,7 +46,7 @@ export default function FindPage() {
   }
 
   return (
-    <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
+    <main className="min-h-screen" style={{ background: "var(--bg-page)", overflowX: "hidden" }}>
       <div className="pointer-events-none fixed inset-x-0 top-0 h-56 overflow-hidden" style={{ zIndex: 0 }}>
         <div style={{
           position: "absolute", top: "-40%", left: "50%", transform: "translateX(-50%)",
@@ -59,7 +59,7 @@ export default function FindPage() {
         <Link
           href="/"
           className="inline-flex items-center gap-1.5 text-sm mb-8 transition-colors"
-          style={{ color: "#94A3B8" }}
+          style={{ color: "var(--fg-muted)" }}
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -70,13 +70,13 @@ export default function FindPage() {
         <h1 className="font-heading text-2xl font-bold text-white mb-1">
           Find my card 🔍
         </h1>
-        <p className="text-sm mb-8" style={{ color: "#94A3B8" }}>
+        <p className="text-sm mb-8" style={{ color: "var(--fg-muted)" }}>
           Enter the phone number you used when creating your card.
         </p>
 
         <form onSubmit={handleFind} className="flex flex-col gap-4">
           <input
-            className={inputCls}
+            className="addme-input"
             type="tel"
             placeholder="0244 123 456 or +233244123456"
             value={phone}
@@ -106,7 +106,7 @@ export default function FindPage() {
               <div className="text-center py-10">
                 <div className="text-4xl mb-3">🤔</div>
                 <p className="font-semibold text-white mb-1">No card found</p>
-                <p className="text-sm mb-6" style={{ color: "#94A3B8" }}>
+                <p className="text-sm mb-6" style={{ color: "var(--fg-muted)" }}>
                   No card was created with that number.
                 </p>
                 <Link
@@ -119,7 +119,7 @@ export default function FindPage() {
               </div>
             ) : (
               <div className="flex flex-col gap-4">
-                <p className="text-sm font-medium" style={{ color: "#94A3B8" }}>
+                <p className="text-sm font-medium" style={{ color: "var(--fg-muted)" }}>
                   {cards.length === 1 ? "Found your card:" : `Found ${cards.length} cards:`}
                 </p>
                 {cards.map((card) => {
@@ -130,8 +130,8 @@ export default function FindPage() {
                       key={card.username}
                       className="rounded-2xl p-4 flex items-center gap-4"
                       style={{
-                        background: "#1A1A1A",
-                        border: "1px solid rgba(255,255,255,0.08)",
+                        background: "var(--bg-card)",
+                        border: "1px solid var(--border)",
                       }}
                     >
                       {/* Avatar */}
@@ -162,7 +162,7 @@ export default function FindPage() {
                         </p>
                         <p
                           className="text-xs mt-0.5 truncate font-mono"
-                          style={{ color: "#94A3B8" }}
+                          style={{ color: "var(--fg-muted)" }}
                         >
                           {cardUrl}
                         </p>
@@ -209,7 +209,7 @@ export default function FindPage() {
 
       <footer
         className="text-center py-6 text-xs"
-        style={{ color: "rgba(148,163,184,0.3)" }}
+        style={{ color: "var(--fg-dim)" }}
       >
         Made with SimoForge ⚡
       </footer>

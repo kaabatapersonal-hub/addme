@@ -80,14 +80,14 @@ function WAIcon() {
 function NotFound() {
   return (
     <main
-      style={{ background: "#080808", minHeight: "100vh" }}
+      style={{ background: "var(--bg-page)", minHeight: "100vh" }}
       className="flex flex-col items-center justify-center px-5 text-center"
     >
       <div className="mb-6 text-5xl">👻</div>
       <h1 className="font-heading text-2xl font-bold text-white mb-3">
         This card doesn't exist
       </h1>
-      <p className="text-sm mb-8" style={{ color: "#94A3B8" }}>
+      <p className="text-sm mb-8" style={{ color: "var(--fg-muted)" }}>
         The link may be wrong or the card has been removed.
       </p>
       <Link
@@ -99,7 +99,7 @@ function NotFound() {
       </Link>
       <footer
         className="absolute bottom-8 text-xs"
-        style={{ color: "rgba(148,163,184,0.35)" }}
+        style={{ color: "var(--fg-dim)" }}
       >
         Made with SimoForge ⚡
       </footer>
@@ -142,7 +142,7 @@ export default async function CardPage({ params }) {
   const btnLabel = isGroup ? "Join our WhatsApp Group" : "Add me on WhatsApp";
 
   return (
-    <main style={{ background: "#080808", minHeight: "100vh" }} className="relative flex flex-col items-center px-5 pb-24 overflow-hidden">
+    <main style={{ background: "var(--bg-page)", minHeight: "100vh" }} className="relative flex flex-col items-center px-5 pb-24 overflow-hidden">
 
       {/* Background glow */}
       <div className="absolute inset-x-0 top-0 h-72 pointer-events-none">
@@ -227,7 +227,7 @@ export default async function CardPage({ params }) {
             ✨ Create your own card — free
           </Link>
 
-          <p className="text-center text-xs" style={{ color: "rgba(148,163,184,0.35)" }}>
+          <p className="text-center text-xs" style={{ color: "var(--fg-dim)" }}>
             Is this your card?{" "}
             <Link href={`/edit/${card.username}`} style={{ color: "rgba(236,72,153,0.55)" }}>
               Edit it

@@ -193,7 +193,7 @@ export default function EditPage({ params }) {
       <main className="min-h-screen flex flex-col items-center justify-center px-5 text-center" style={{ background: "#080808" }}>
         <div className="text-4xl mb-3">👻</div>
         <h1 className="font-heading text-xl font-bold text-white mb-2">Card not found</h1>
-        <p className="text-sm mb-6" style={{ color: "#94A3B8" }}>
+        <p className="text-sm mb-6" style={{ color: "var(--fg-muted)" }}>
           We couldn't find a card at this URL.
         </p>
         <Link href="/find" className="font-semibold px-6 py-3 rounded-xl text-sm text-white" style={{ background: "#EC4899" }}>
@@ -215,9 +215,9 @@ export default function EditPage({ params }) {
 
   if (!verified) {
     return (
-      <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
+      <main className="min-h-screen" style={{ background: "var(--bg-page)", overflowX: "hidden" }}>
         <div className="max-w-lg mx-auto px-5 pt-16 pb-24">
-          <Link href={`/${username}`} className="inline-flex items-center gap-1.5 text-sm mb-8" style={{ color: "#94A3B8" }}>
+          <Link href={`/${username}`} className="inline-flex items-center gap-1.5 text-sm mb-8" style={{ color: "var(--fg-muted)" }}>
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
@@ -225,13 +225,13 @@ export default function EditPage({ params }) {
           </Link>
 
           <h1 className="font-heading text-2xl font-bold text-white mb-1">Edit your card</h1>
-          <p className="text-sm mb-8" style={{ color: "#94A3B8" }}>
+          <p className="text-sm mb-8" style={{ color: "var(--fg-muted)" }}>
             Enter the phone number on this card to verify it's yours.
           </p>
 
           <div className="flex flex-col gap-4">
             <input
-              className={inputCls}
+              className="addme-input"
               type="tel"
               placeholder="0244 123 456"
               value={verifyPhone}
@@ -276,7 +276,7 @@ export default function EditPage({ params }) {
       <main className="min-h-screen flex flex-col items-center justify-center px-5 text-center" style={{ background: "#080808" }}>
         <div className="text-5xl mb-4">✅</div>
         <h1 className="font-heading text-2xl font-bold text-white mb-2">Card updated!</h1>
-        <p className="text-sm mb-8" style={{ color: "#94A3B8" }}>Your changes are live.</p>
+        <p className="text-sm mb-8" style={{ color: "var(--fg-muted)" }}>Your changes are live.</p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
           <Link href={`/${username}`} className="w-full py-3.5 rounded-xl font-semibold text-white text-sm text-center transition-all" style={{ background: "#EC4899" }}>
             View my card
@@ -292,7 +292,7 @@ export default function EditPage({ params }) {
   const isGroup = card.type === "group";
 
   return (
-    <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
+    <main className="min-h-screen" style={{ background: "var(--bg-page)", overflowX: "hidden" }}>
       <div className="pointer-events-none fixed inset-x-0 top-0 h-56 overflow-hidden" style={{ zIndex: 0 }}>
         <div style={{
           position: "absolute", top: "-40%", left: "50%", transform: "translateX(-50%)",
@@ -301,7 +301,7 @@ export default function EditPage({ params }) {
         }} />
       </div>
       <div className="relative z-10 max-w-lg mx-auto px-5 pt-14 pb-28">
-        <Link href={`/${username}`} className="inline-flex items-center gap-1.5 text-sm mb-6" style={{ color: "#94A3B8" }}>
+        <Link href={`/${username}`} className="inline-flex items-center gap-1.5 text-sm mb-6" style={{ color: "var(--fg-muted)" }}>
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
           </svg>
@@ -309,30 +309,30 @@ export default function EditPage({ params }) {
         </Link>
 
         <h1 className="font-heading text-2xl font-bold text-white mb-1">Edit card</h1>
-        <p className="text-sm mb-8" style={{ color: "#94A3B8" }}>
+        <p className="text-sm mb-8" style={{ color: "var(--fg-muted)" }}>
           Changes go live immediately.
         </p>
 
         <div className="flex flex-col gap-5">
           {/* Name */}
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
               {isGroup ? "Group name" : "Name or nickname"}
             </label>
-            <input className={inputCls} value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
+            <input className="addme-input" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" />
           </div>
 
           {/* Phone — personal only */}
           {!isGroup && (
             <div>
-              <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>WhatsApp number</label>
-              <input className={inputCls} type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+233 244 123 456" />
+              <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>WhatsApp number</label>
+              <input className="addme-input" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+233 244 123 456" />
             </div>
           )}
 
           {/* Profile picture */}
           <div>
-            <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+            <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
               {isGroup ? "Group picture" : "Profile picture"}
             </label>
             {imagePreview ? (
@@ -340,7 +340,7 @@ export default function EditPage({ params }) {
                 <img src={imagePreview} alt="Preview" className="w-16 h-16 rounded-full object-cover" style={{ border: "2px solid #EC4899" }} />
                 <div>
                   <p className="text-sm text-white font-medium">Photo uploaded ✓</p>
-                  <p className="text-xs mt-0.5" style={{ color: "#94A3B8" }}>Tap to change</p>
+                  <p className="text-xs mt-0.5" style={{ color: "var(--fg-muted)" }}>Tap to change</p>
                 </div>
               </div>
             ) : (
@@ -349,7 +349,7 @@ export default function EditPage({ params }) {
                 className="w-full py-5 rounded-xl flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 style={{ background: "#0d0d0d", border: "2px dashed rgba(255,255,255,0.1)" }}
               >
-                <span className="text-sm" style={{ color: "#94A3B8" }}>Upload new photo</span>
+                <span className="text-sm" style={{ color: "var(--fg-muted)" }}>Upload new photo</span>
               </div>
             )}
             <input ref={imgInputRef} type="file" accept="image/*" className="hidden" onChange={handleImage} />
@@ -357,7 +357,7 @@ export default function EditPage({ params }) {
 
           {/* Bio */}
           <div>
-            <label className="block text-sm font-medium mb-3" style={{ color: "rgba(255,255,255,0.55)" }}>Bio</label>
+            <label className="block text-sm font-medium mb-3" style={{ color: "var(--fg-muted)" }}>Bio</label>
             <BioGrid
               selected={bio}
               onSelect={setBio}
@@ -374,7 +374,7 @@ export default function EditPage({ params }) {
 
           {/* Template */}
           <div>
-            <label className="block text-sm font-medium mb-3" style={{ color: "rgba(255,255,255,0.55)" }}>Template</label>
+            <label className="block text-sm font-medium mb-3" style={{ color: "var(--fg-muted)" }}>Template</label>
             <div className="grid grid-cols-3 gap-2">
               {FREE_TEMPLATES.map((t) => (
                 <button

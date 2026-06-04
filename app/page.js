@@ -51,22 +51,21 @@ function CardMockup() {
       transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
       style={{ display: "inline-block" }}
     >
-      <div
-        style={{
-          background: "linear-gradient(145deg, #161616 0%, #1c1c1c 100%)",
-          border: "1.5px solid rgba(236,72,153,0.4)",
-          borderRadius: 24,
-          padding: "22px 22px 18px",
-          boxShadow: "0 0 60px rgba(236,72,153,0.18), 0 28px 70px rgba(0,0,0,0.65)",
-          width: 210,
-        }}
-      >
+      <div style={{
+        background: "rgba(255,255,255,0.14)",
+        border: "1.5px solid rgba(255,255,255,0.3)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        borderRadius: 24,
+        padding: "22px 22px 18px",
+        boxShadow: "0 28px 70px rgba(0,0,0,0.35)",
+        width: 210,
+      }}>
         <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
           <div style={{
             width: 62, height: 62, borderRadius: "50%",
-            background: "linear-gradient(135deg, #EC4899 0%, #9d174d 100%)",
-            border: "3px solid #EC4899",
-            boxShadow: "0 0 24px rgba(236,72,153,0.5)",
+            background: "rgba(255,255,255,0.25)",
+            border: "3px solid rgba(255,255,255,0.5)",
             display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26,
           }}>
             🤳
@@ -75,18 +74,18 @@ function CardMockup() {
         <p style={{ textAlign: "center", color: "#fff", fontWeight: 700, fontSize: 15, marginBottom: 5 }}>
           Kwame Asante
         </p>
-        <p style={{ textAlign: "center", color: "#94A3B8", fontSize: 11, lineHeight: 1.55, marginBottom: 16 }}>
+        <p style={{ textAlign: "center", color: "rgba(255,255,255,0.72)", fontSize: 11, lineHeight: 1.55, marginBottom: 16 }}>
           Dev & designer 💻 · Accra 🇬🇭{"\n"}Always building something 🚀
         </p>
         <div style={{
           background: "#25D366", borderRadius: 14, padding: "12px 0",
           display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-          boxShadow: "0 4px 18px rgba(37,211,102,0.32)",
+          boxShadow: "0 4px 18px rgba(37,211,102,0.4)",
         }}>
           <WAIcon size={14} />
           <span style={{ color: "#fff", fontWeight: 600, fontSize: 13 }}>Add me on WhatsApp</span>
         </div>
-        <p style={{ textAlign: "center", color: "rgba(148,163,184,0.38)", fontSize: 10, marginTop: 11 }}>
+        <p style={{ textAlign: "center", color: "rgba(255,255,255,0.35)", fontSize: 10, marginTop: 11 }}>
           👁 247 views
         </p>
       </div>
@@ -96,8 +95,8 @@ function CardMockup() {
 
 const HOW_IT_WORKS = [
   { n: "01", icon: "✏️", title: "Fill in your details", desc: "Name, photo, bio, phone number. Takes 30 seconds." },
-  { n: "02", icon: "📲", title: "Share your card", desc: "Post it on your WhatsApp status or send the link directly to friends." },
-  { n: "03", icon: "🎉", title: "People add you", desc: "They tap your link and add you instantly. No friction, no DMs needed." },
+  { n: "02", icon: "📲", title: "Share your card", desc: "Post on your WhatsApp status or send the link to friends." },
+  { n: "03", icon: "🎉", title: "People add you", desc: "They tap your link and add you instantly. No friction." },
 ];
 
 export default function HomePage() {
@@ -111,115 +110,94 @@ export default function HomePage() {
   }, []);
 
   return (
-    <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
+    <main style={{ overflowX: "hidden" }}>
 
-      {/* ── Hero ──────────────────────────────────────────────────────── */}
-      <section className="relative flex flex-col items-center text-center px-5 pt-14 pb-16 min-h-[100dvh]">
-
-        {/* Glow backdrop */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div style={{
-            position: "absolute", top: "-5%", left: "50%", transform: "translateX(-50%)",
-            width: "160%", height: "55%",
-            background: "radial-gradient(ellipse at center, rgba(236,72,153,0.13) 0%, rgba(168,85,247,0.06) 45%, transparent 72%)",
-          }} />
-        </div>
+      {/* ── Hero — always gradient ─────────────────────────── */}
+      <section
+        className="relative flex flex-col items-center text-center px-5 pt-14 pb-16 min-h-[100dvh]"
+        style={{ background: "linear-gradient(145deg, #6D28D9 0%, #9D174D 55%, #EC4899 100%)" }}
+      >
+        {/* Subtle noise/texture overlay */}
+        <div className="absolute inset-0 pointer-events-none" style={{
+          background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.12) 0%, transparent 70%)",
+        }} />
 
         <div className="relative z-10 w-full max-w-md mx-auto flex flex-col items-center">
 
-          {/* Trust chip */}
           <FadeUp delay={0}>
             <div className="flex flex-col items-center gap-2 mb-6">
-              <span
-                className="inline-flex items-center gap-1.5 text-[11px] font-bold px-4 py-1.5 rounded-full"
-                style={{ color: "#EC4899", background: "rgba(236,72,153,0.1)", border: "1px solid rgba(236,72,153,0.22)" }}
-              >
+              <span className="inline-flex items-center gap-1.5 text-[11px] font-bold px-4 py-1.5 rounded-full"
+                style={{ color: "#fff", background: "rgba(255,255,255,0.18)", border: "1px solid rgba(255,255,255,0.28)" }}>
                 ✦ Free forever · No signup needed
               </span>
               {cardCount > 0 && (
-                <p className="text-[12px] font-medium" style={{ color: "rgba(148,163,184,0.6)" }}>
+                <p className="text-[12px] font-medium" style={{ color: "rgba(255,255,255,0.7)" }}>
                   🔥 {cardCount.toLocaleString()} cards already created
                 </p>
               )}
             </div>
           </FadeUp>
 
-          {/* Headline */}
           <FadeUp delay={0.08}>
-            <h1
-              className="font-heading font-bold text-white leading-[1.1] tracking-tight mb-4"
-              style={{ fontSize: "clamp(2.1rem, 8.5vw, 3.2rem)" }}
-            >
+            <h1 className="font-heading font-bold text-white leading-[1.1] tracking-tight mb-4"
+              style={{ fontSize: "clamp(2.1rem, 8.5vw, 3.2rem)" }}>
               Get people adding<br />
               you on WhatsApp<br />
-              <span style={{
-                background: "linear-gradient(90deg, #EC4899 0%, #f472b6 100%)",
-                WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-              }}>every single day</span> 🚀
+              every single day 🚀
             </h1>
           </FadeUp>
 
-          {/* Sub */}
           <FadeUp delay={0.14}>
-            <p className="text-[15px] leading-relaxed mb-8 max-w-[290px]" style={{ color: "#94A3B8" }}>
+            <p className="text-[15px] leading-relaxed mb-8 max-w-[290px]"
+              style={{ color: "rgba(255,255,255,0.75)" }}>
               Create your card in seconds. Share once on status. Watch the adds come in.
             </p>
           </FadeUp>
 
-          {/* Floating card mockup */}
           <FadeUp delay={0.2}>
             <div className="mb-9">
               <CardMockup />
             </div>
           </FadeUp>
 
-          {/* CTAs */}
           <FadeUp delay={0.26}>
             <div className="w-full flex flex-col gap-3">
-
-              <Link
-                href="/create"
+              <Link href="/create"
                 className="w-full flex items-center justify-center gap-2.5 font-bold text-white rounded-2xl transition-all duration-200 active:scale-[0.97]"
-                style={{
-                  background: "linear-gradient(135deg, #EC4899 0%, #db2777 100%)",
-                  padding: "17px 0", fontSize: 16,
-                  boxShadow: "0 8px 32px rgba(236,72,153,0.38)",
-                }}
-              >
+                style={{ background: "rgba(255,255,255,0.22)", border: "1.5px solid rgba(255,255,255,0.35)", padding: "17px 0", fontSize: 16, backdropFilter: "blur(8px)" }}>
                 ✨ Create my AddMe card
               </Link>
 
-              <Link
-                href="/generate"
+              <Link href="/generate"
                 className="w-full flex items-center justify-center gap-2 font-semibold rounded-2xl transition-all duration-200 active:scale-[0.97]"
-                style={{
-                  background: "rgba(255,255,255,0.05)",
-                  border: "1.5px solid rgba(255,255,255,0.1)",
-                  color: "#e2e8f0", padding: "15px 0", fontSize: 15,
-                }}
-              >
+                style={{ background: "rgba(255,255,255,0.1)", border: "1.5px solid rgba(255,255,255,0.18)", color: "#fff", padding: "15px 0", fontSize: 15 }}>
                 ⚡ Just get my WhatsApp link
               </Link>
 
-              <Link
-                href="/find"
+              <Link href="/find"
                 className="flex items-center justify-center gap-1.5 text-sm font-medium transition-opacity active:opacity-60 mt-1"
-                style={{ color: "rgba(148,163,184,0.55)" }}
-              >
+                style={{ color: "rgba(255,255,255,0.55)" }}>
                 🔍 Already have a card? Find it →
               </Link>
             </div>
           </FadeUp>
         </div>
+
+        {/* Wave bottom */}
+        <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none" style={{ height: 48 }}>
+          <svg viewBox="0 0 1200 48" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
+            <path d="M0,48 C300,0 900,0 1200,48 L1200,48 L0,48 Z" fill="var(--bg-page)" />
+          </svg>
+        </div>
       </section>
 
-      {/* ── How it works ──────────────────────────────────────────────── */}
-      <section className="px-5 pb-20 max-w-lg mx-auto">
+      {/* ── Body — themed ─────────────────────────────────────── */}
+      <section className="px-5 pt-12 pb-20 max-w-lg mx-auto">
         <ScrollFadeUp className="text-center mb-8">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] mb-2.5" style={{ color: "#EC4899" }}>
             How it works
           </p>
-          <h2 className="font-heading text-[1.75rem] font-bold text-white">
+          <h2 className="font-heading text-[1.75rem] font-bold" style={{ color: "var(--fg)" }}>
             Three steps. That's it.
           </h2>
         </ScrollFadeUp>
@@ -227,25 +205,18 @@ export default function HomePage() {
         <div className="flex flex-col gap-3">
           {HOW_IT_WORKS.map((step, i) => (
             <ScrollFadeUp key={step.n} delay={i * 0.07}>
-              <div
-                className="flex items-start gap-4 p-5 rounded-2xl"
-                style={{
-                  background: "linear-gradient(135deg, #111111 0%, #0f0f0f 100%)",
-                  border: "1px solid rgba(255,255,255,0.06)",
-                }}
-              >
-                <div
-                  className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-                  style={{ background: "rgba(236,72,153,0.1)", border: "1px solid rgba(236,72,153,0.18)" }}
-                >
+              <div className="flex items-start gap-4 p-5 rounded-2xl transition-shadow"
+                style={{ background: "var(--bg-card)", border: "1px solid var(--border)", boxShadow: "var(--shadow)" }}>
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
+                  style={{ background: "rgba(236,72,153,0.1)", border: "1px solid rgba(236,72,153,0.18)" }}>
                   {step.icon}
                 </div>
                 <div className="pt-0.5">
-                  <span className="text-[10px] font-black tracking-[0.15em]" style={{ color: "rgba(236,72,153,0.55)" }}>
+                  <span className="text-[10px] font-black tracking-[0.15em]" style={{ color: "#EC4899" }}>
                     {step.n}
                   </span>
-                  <p className="font-semibold text-white text-[15px] mt-0.5 mb-1">{step.title}</p>
-                  <p className="text-[13px] leading-relaxed" style={{ color: "#94A3B8" }}>{step.desc}</p>
+                  <p className="font-semibold text-[15px] mt-0.5 mb-1" style={{ color: "var(--fg)" }}>{step.title}</p>
+                  <p className="text-[13px] leading-relaxed" style={{ color: "var(--fg-muted)" }}>{step.desc}</p>
                 </div>
               </div>
             </ScrollFadeUp>
@@ -253,60 +224,47 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Stats ────────────────────────────────────────────────────── */}
+      {/* ── Stats ─────────────────────────────────────────────── */}
       <section className="px-5 pb-20 max-w-lg mx-auto">
         <ScrollFadeUp>
-          <div
-            className="grid grid-cols-3 gap-px rounded-2xl overflow-hidden"
-            style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.06)" }}
-          >
+          <div className="grid grid-cols-3 gap-px rounded-2xl overflow-hidden"
+            style={{ background: "var(--border)", border: "1px solid var(--border)" }}>
             {[
               { value: cardCount ? `${cardCount}+` : "—", label: "Cards created" },
               { value: "Free", label: "Always" },
               { value: "0", label: "Signups needed" },
             ].map((s) => (
-              <div key={s.label} className="text-center py-5 px-2" style={{ background: "#0f0f0f" }}>
-                <p className="font-heading font-bold text-white text-xl">{s.value}</p>
-                <p className="text-[11px] mt-0.5" style={{ color: "rgba(148,163,184,0.55)" }}>{s.label}</p>
+              <div key={s.label} className="text-center py-5 px-2" style={{ background: "var(--bg-card)" }}>
+                <p className="font-heading font-bold text-xl" style={{ color: "var(--fg)" }}>{s.value}</p>
+                <p className="text-[11px] mt-0.5" style={{ color: "var(--fg-muted)" }}>{s.label}</p>
               </div>
             ))}
           </div>
         </ScrollFadeUp>
       </section>
 
-      {/* ── Bottom CTA ────────────────────────────────────────────────── */}
+      {/* ── Bottom CTA — always gradient ──────────────────────── */}
       <section className="px-5 pb-24 max-w-md mx-auto">
         <ScrollFadeUp>
-          <div
-            className="rounded-3xl p-8 text-center"
-            style={{
-              background: "linear-gradient(145deg, #140a2a 0%, #1e0d42 100%)",
-              border: "1px solid rgba(168,85,247,0.22)",
-              boxShadow: "0 0 60px rgba(168,85,247,0.1)",
-            }}
-          >
+          <div className="rounded-3xl p-8 text-center"
+            style={{ background: "linear-gradient(145deg, #6D28D9 0%, #EC4899 100%)", boxShadow: "0 8px 40px rgba(109,40,217,0.28)" }}>
             <div className="text-5xl mb-5">🚀</div>
             <h2 className="font-heading text-[1.6rem] font-bold text-white mb-2 leading-tight">
               Ready to grow your WhatsApp?
             </h2>
-            <p className="text-sm mb-7" style={{ color: "#c4b5fd" }}>
+            <p className="text-sm mb-7" style={{ color: "rgba(255,255,255,0.75)" }}>
               Free forever. No account. No waiting.
             </p>
-            <Link
-              href="/create"
-              className="inline-flex items-center gap-2 font-bold text-white px-8 py-4 rounded-2xl text-[15px] transition-all duration-200 active:scale-[0.97]"
-              style={{
-                background: "linear-gradient(135deg, #EC4899 0%, #db2777 100%)",
-                boxShadow: "0 8px 28px rgba(236,72,153,0.4)",
-              }}
-            >
+            <Link href="/create"
+              className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-[15px] transition-all duration-200 active:scale-[0.97]"
+              style={{ background: "rgba(255,255,255,0.22)", color: "#fff", border: "1.5px solid rgba(255,255,255,0.35)" }}>
               Get started free →
             </Link>
           </div>
         </ScrollFadeUp>
       </section>
 
-      <footer className="text-center py-8 text-xs" style={{ color: "rgba(148,163,184,0.3)" }}>
+      <footer className="text-center py-8 text-xs" style={{ color: "var(--fg-dim)" }}>
         Made with SimoForge ⚡
       </footer>
     </main>

@@ -51,9 +51,9 @@ const GUIDE_STEPS = [
     emoji: "📷",
     title: "Tap the camera icon 📷",
     text: "Open WhatsApp, go to a friend's chat and tap the camera icon next to the message bar — not the attach icon, the camera one.",
-    bg: "linear-gradient(135deg, #0d1f2d 0%, #0f3460 100%)",
-    border: "rgba(56,189,248,0.35)",
-    glow: "rgba(56,189,248,0.1)",
+    bg: "linear-gradient(135deg, #2563EB 0%, #0EA5E9 100%)",
+    border: "rgba(255,255,255,0.2)",
+    glow: "rgba(37,99,235,0.25)",
     hasMock: false,
   },
   {
@@ -61,9 +61,9 @@ const GUIDE_STEPS = [
     emoji: "📸",
     title: "Pick your picture or video 📸",
     text: "Select a good photo or short video of yourself from your gallery.",
-    bg: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
-    border: "rgba(99,102,241,0.35)",
-    glow: "rgba(99,102,241,0.12)",
+    bg: "linear-gradient(135deg, #7C3AED 0%, #A855F7 100%)",
+    border: "rgba(255,255,255,0.2)",
+    glow: "rgba(124,58,237,0.25)",
     hasMock: false,
   },
   {
@@ -71,9 +71,9 @@ const GUIDE_STEPS = [
     emoji: "👇",
     title: "Paste your copied text in the caption 👇",
     text: "In the caption field below your picture, paste the text you already copied. Your picture and link are now one complete message — exactly like this:",
-    bg: "linear-gradient(135deg, #052e16 0%, #14532d 100%)",
-    border: "rgba(34,197,94,0.35)",
-    glow: "rgba(34,197,94,0.1)",
+    bg: "linear-gradient(135deg, #059669 0%, #10B981 100%)",
+    border: "rgba(255,255,255,0.2)",
+    glow: "rgba(5,150,105,0.25)",
     hasMock: true,
   },
   {
@@ -81,9 +81,9 @@ const GUIDE_STEPS = [
     emoji: "💬",
     title: "Send it to as many friends as possible 💬",
     text: "Send that complete message to as many friends as you can. The more friends you send it to, the more people will see you.",
-    bg: "linear-gradient(135deg, #0c1445 0%, #1a2a6c 100%)",
-    border: "rgba(99,102,241,0.35)",
-    glow: "rgba(99,102,241,0.1)",
+    bg: "linear-gradient(135deg, #EA580C 0%, #F97316 100%)",
+    border: "rgba(255,255,255,0.2)",
+    glow: "rgba(234,88,12,0.25)",
     hasMock: false,
   },
   {
@@ -91,9 +91,9 @@ const GUIDE_STEPS = [
     emoji: "📢",
     title: "Ask them to post it on their status ✅",
     text: "Ask each friend to forward your message to their WhatsApp status. Their contacts will see your face, tap your link, and add you directly on WhatsApp.",
-    bg: "linear-gradient(135deg, #1a0533 0%, #3b0764 100%)",
-    border: "rgba(168,85,247,0.35)",
-    glow: "rgba(168,85,247,0.12)",
+    bg: "linear-gradient(135deg, #EC4899 0%, #F43F5E 100%)",
+    border: "rgba(255,255,255,0.2)",
+    glow: "rgba(236,72,153,0.25)",
     hasMock: false,
   },
 ];
@@ -109,8 +109,7 @@ const slideVariants = {
 
 // ─── atoms ────────────────────────────────────────────────────────────────────
 
-const inputCls =
-  "w-full bg-[#111111] border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-white/25 outline-none transition-all duration-150 focus:border-[#EC4899] focus:ring-1 focus:ring-[#EC4899]/25";
+const inputCls = "addme-input";
 
 function ProgressBar({ step, total = 7 }) {
   const pct = Math.round(((step - 1) / (total - 1)) * 100);
@@ -182,7 +181,7 @@ function BioGrid({ selectedBio, onSelect }) {
   return (
     <div>
       <div className="flex items-center justify-between mb-2.5">
-        <p className="text-sm font-medium" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <p className="text-sm font-medium" style={{ color: "var(--fg-muted)" }}>
           Premade bios
         </p>
         <button
@@ -205,9 +204,9 @@ function BioGrid({ selectedBio, onSelect }) {
               onClick={() => onSelect(sel ? "" : bio.text)}
               className="text-left px-3.5 py-2.5 rounded-xl text-[13px] leading-relaxed transition-all duration-150"
               style={{
-                background: sel ? "rgba(236,72,153,0.1)" : "#0d0d0d",
-                border: sel ? "1px solid rgba(236,72,153,0.5)" : "1px solid rgba(255,255,255,0.06)",
-                color: sel ? "#fff" : "#94A3B8",
+                background: sel ? "rgba(236,72,153,0.1)" : "var(--bg-subtle)",
+                border: sel ? "1px solid rgba(236,72,153,0.45)" : "1px solid var(--border)",
+                color: sel ? "#EC4899" : "var(--fg-muted)",
               }}
             >
               {bio.text}
@@ -242,14 +241,14 @@ function CopyBlock({ label, text }) {
   return (
     <div
       className="rounded-2xl p-4"
-      style={{ background: "#111111", border: "1px solid rgba(255,255,255,0.08)" }}
+      style={{ background: "var(--bg-card)", border: "1px solid var(--border)", boxShadow: "var(--shadow)" }}
     >
       <p className="text-xs font-semibold mb-3" style={{ color: "#EC4899" }}>
         {label}
       </p>
       <pre
         className="text-sm leading-relaxed whitespace-pre-wrap break-words font-sans"
-        style={{ color: "#e2e8f0" }}
+        style={{ color: "var(--fg)" }}
       >
         {text}
       </pre>
@@ -290,17 +289,17 @@ function Step1({ name, phone, bio, onChangeName, onChangePhone, onChangeBio }) {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="font-heading text-2xl font-bold text-white mb-1">
+        <h2 className="font-heading text-2xl font-bold mb-1" style={{ color: "var(--fg)" }}>
           Enter your details
         </h2>
-        <p className="text-sm" style={{ color: "#94A3B8" }}>
+        <p className="text-sm" style={{ color: "var(--fg-muted)" }}>
           We'll generate your WhatsApp link and text blocks
         </p>
       </div>
 
       {/* Name */}
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
           Your name
         </label>
         <input
@@ -313,7 +312,7 @@ function Step1({ name, phone, bio, onChangeName, onChangePhone, onChangeBio }) {
 
       {/* Phone */}
       <div>
-        <label className="block text-sm font-medium mb-2" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
           WhatsApp number
         </label>
         <input
@@ -338,7 +337,7 @@ function Step1({ name, phone, bio, onChangeName, onChangePhone, onChangeBio }) {
 
       {/* Bio */}
       <div>
-        <label className="block text-sm font-medium mb-3" style={{ color: "rgba(255,255,255,0.55)" }}>
+        <label className="block text-sm font-medium mb-3" style={{ color: "var(--fg-muted)" }}>
           Your bio
         </label>
         <BioGrid selectedBio={bio} onSelect={onChangeBio} />
@@ -370,10 +369,10 @@ function Step2({ name, phone, bio, onNext }) {
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <h2 className="font-heading text-2xl font-bold text-white mb-1">
+        <h2 className="font-heading text-2xl font-bold mb-1" style={{ color: "var(--fg)" }}>
           Your generated links 🎉
         </h2>
-        <p className="text-sm" style={{ color: "#94A3B8" }}>
+        <p className="text-sm" style={{ color: "var(--fg-muted)" }}>
           Copy the right version and send to your friends
         </p>
       </div>
@@ -450,10 +449,10 @@ function GuideCard({ guide, onNext, mockText }) {
         }}
       >
         <div className="text-7xl leading-none">{guide.emoji}</div>
-        <h3 className="font-heading text-xl font-bold text-white leading-tight">
+        <h3 className="font-heading text-xl font-bold leading-tight" style={{ color: "#fff" }}>
           {guide.title}
         </h3>
-        <p className="text-sm leading-relaxed" style={{ color: "#cbd5e1", maxWidth: 280 }}>
+        <p className="text-sm leading-relaxed" style={{ color: "rgba(255,255,255,0.82)", maxWidth: 280 }}>
           {guide.text}
         </p>
 
@@ -564,13 +563,11 @@ export default function GeneratePage() {
   const guideData = GUIDE_STEPS.find((g) => g.step === step);
 
   return (
-    <main className="min-h-screen" style={{ background: "#080808", overflowX: "hidden" }}>
-      {/* Top glow */}
-      <div className="pointer-events-none fixed inset-x-0 top-0 h-64 overflow-hidden" style={{ zIndex: 0 }}>
+    <main className="min-h-screen" style={{ background: "var(--bg-page)", overflowX: "hidden" }}>
+      <div className="pointer-events-none fixed inset-x-0 top-0 h-48 overflow-hidden" style={{ zIndex: 0 }}>
         <div style={{
-          position: "absolute", top: "-40%", left: "50%", transform: "translateX(-50%)",
-          width: "120%", height: "100%",
-          background: "radial-gradient(ellipse at center, rgba(236,72,153,0.09) 0%, transparent 70%)",
+          position: "absolute", top: 0, left: 0, right: 0, height: "100%",
+          background: "linear-gradient(to bottom, rgba(236,72,153,0.07) 0%, transparent 100%)",
         }} />
       </div>
       <div className="relative z-10 max-w-lg mx-auto px-5 pt-12 pb-28">
@@ -625,10 +622,7 @@ export default function GeneratePage() {
         </div>
       </div>
 
-      <footer
-        className="text-center py-6 text-xs"
-        style={{ color: "rgba(148,163,184,0.3)" }}
-      >
+      <footer className="text-center py-6 text-xs" style={{ color: "var(--fg-dim)" }}>
         Made with SimoForge ⚡
       </footer>
     </main>
