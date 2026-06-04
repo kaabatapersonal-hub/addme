@@ -48,9 +48,9 @@ function shuffleArray(arr) {
 const GUIDE_STEPS = [
   {
     step: 3,
-    emoji: "📎",
-    title: "Open WhatsApp and tap attach 📎",
-    text: "Open WhatsApp, go to any friend's chat and tap the attachment icon.",
+    emoji: "📷",
+    title: "Tap the camera icon 📷",
+    text: "Open WhatsApp, go to a friend's chat and tap the camera icon next to the message bar — not the attach icon, the camera one.",
     bg: "linear-gradient(135deg, #0d1f2d 0%, #0f3460 100%)",
     border: "rgba(56,189,248,0.35)",
     glow: "rgba(56,189,248,0.1)",
