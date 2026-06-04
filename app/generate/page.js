@@ -121,7 +121,7 @@ function ProgressBar({ step, total = 7 }) {
         </p>
         <p className="text-[11px] font-bold" style={{ color: "#EC4899" }}>{pct}%</p>
       </div>
-      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
         <motion.div
           className="h-full rounded-full"
           style={{ background: "linear-gradient(90deg, #EC4899 0%, #f472b6 100%)" }}
@@ -491,7 +491,7 @@ function Step7({ onReset }) {
       </div>
 
       <div>
-        <h2 className="font-heading text-2xl font-bold text-white mb-2">
+        <h2 className="font-heading text-2xl font-bold mb-2" style={{ color: "var(--fg)" }}>
           You're all set!
         </h2>
         <p className="text-sm leading-relaxed" style={{ color: "#94A3B8", maxWidth: 260, margin: "0 auto" }}>

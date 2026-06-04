@@ -163,7 +163,7 @@ function ProgressBar({ step }) {
         </p>
         <p className="text-[11px] font-bold" style={{ color: "#EC4899" }}>{pct}%</p>
       </div>
-      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.07)" }}>
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
         <motion.div
           className="h-full rounded-full"
           style={{ background: "linear-gradient(90deg, #EC4899 0%, #f472b6 100%)" }}
@@ -237,7 +237,7 @@ function ChoiceCard({ icon, title, desc, selected, onClick }) {
       <div className="text-3xl mb-3 leading-none">{icon}</div>
       <p
         className="font-semibold text-[15px] leading-tight"
-        style={{ color: selected ? "#ffffff" : "rgba(255,255,255,0.75)" }}
+        style={{ color: selected ? "#ffffff" : "var(--fg)" }}
       >
         {title}
       </p>
@@ -350,7 +350,7 @@ function ImageUpload({ label = "Profile picture", preview, onChange }) {
             style={{ border: "2px solid #EC4899" }}
           />
           <div>
-            <p className="text-sm text-white font-medium">Photo uploaded ✓</p>
+            <p className="text-sm font-medium" style={{ color: "var(--fg)" }}>Photo uploaded ✓</p>
             <p className="text-xs mt-0.5" style={{ color: "var(--fg-muted)" }}>
               Tap to change
             </p>
@@ -360,8 +360,8 @@ function ImageUpload({ label = "Profile picture", preview, onChange }) {
         <div
           className="cursor-pointer rounded-xl py-6 flex flex-col items-center gap-2 transition-colors duration-150"
           style={{
-            background: "#0d0d0d",
-            border: "2px dashed rgba(255,255,255,0.12)",
+            background: "var(--bg-subtle)",
+            border: "2px dashed var(--border)",
           }}
           onClick={() => inputRef.current?.click()}
           onMouseEnter={(e) =>
@@ -382,7 +382,7 @@ function ImageUpload({ label = "Profile picture", preview, onChange }) {
           <p className="text-sm" style={{ color: "var(--fg-muted)" }}>
             Upload photo
           </p>
-          <p className="text-xs" style={{ color: "rgba(255,255,255,0.2)" }}>
+          <p className="text-xs" style={{ color: "var(--fg-dim)" }}>
             Auto-compressed · max 500×500px
           </p>
         </div>
@@ -480,11 +480,11 @@ function UsernameField({ value, status, onChange }) {
             : "1px solid rgba(255,255,255,0.1)",
         }}
       >
-        <span className="pl-4 text-sm flex-shrink-0 whitespace-nowrap" style={{ color: "rgba(255,255,255,0.3)" }}>
+        <span className="pl-4 text-sm flex-shrink-0 whitespace-nowrap" style={{ color: "var(--fg-dim)" }}>
           {baseUrl}/
         </span>
         <input
-          className="flex-1 py-3 px-1 text-sm text-white bg-transparent outline-none placeholder-white/25"
+          className="flex-1 py-3 px-1 text-sm bg-transparent outline-none" style={{ color: "var(--fg)" }}
           placeholder="yourname"
           value={value}
           onChange={(e) => onChange(e.target.value)}
