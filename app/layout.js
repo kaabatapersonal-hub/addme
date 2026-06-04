@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SupportButton } from "@/components/SupportButton";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -39,6 +40,7 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${inter.variable} antialiased min-h-screen`}>
         <ThemeProvider>
           <ThemeToggle />
+          <SupportButton />
           {children}
         </ThemeProvider>
       </body>

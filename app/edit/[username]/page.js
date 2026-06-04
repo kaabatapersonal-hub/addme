@@ -362,7 +362,7 @@ export default function EditPage({ params }) {
               mode={card.mode || "friendly"}
             />
             <textarea
-              className={`${inputCls} resize-none mt-3`}
+              className="addme-input resize-none mt-3"
               rows={3}
               placeholder="Or write your own bio..."
               value={bio}

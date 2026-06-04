@@ -553,7 +553,7 @@ function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus,
         </label>
         <input
           className={inputCls}
-          placeholder={mode === "business" ? "e.g. TasteKitchen" : "e.g. Zara Ahmed"}
+          placeholder={mode === "business" ? "e.g. TasteKitchen" : "e.g. Simo, Simon, ItzIncredibleSimo"}
           value={details.name}
           onChange={(e) => set("name", e.target.value)}
         />
@@ -574,7 +574,7 @@ function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus,
         <input
           className={inputCls}
           type="tel"
-          placeholder="+233 244 123 456"
+          placeholder="0257 653 283 or +233257653283"
           value={details.phone}
           onChange={(e) => set("phone", e.target.value)}
         />
@@ -877,8 +877,9 @@ function TemplateMiniCard({ template, name, imagePreview, selected, onClick }) {
 
 // ─── step 4 ───────────────────────────────────────────────────────────────────
 
-function Step4({ templateId, details, cardType, onChange }) {
+function Step4({ templateId, details, cardType, onChange, isPublic, onTogglePublic }) {
   const name = cardType === "group" ? details.groupName : details.name;
+  const [showPrivateTip, setShowPrivateTip] = useState(false);
 
   return (
     <div>
@@ -902,19 +903,81 @@ function Step4({ templateId, details, cardType, onChange }) {
         ))}
       </div>
 
-      <p
-        className="text-xs text-center mt-4"
-        style={{ color: "rgba(148,163,184,0.45)" }}
-      >
+      <p className="text-xs text-center mt-4 mb-5" style={{ color: "rgba(148,163,184,0.45)" }}>
         Scroll to see all · Premium templates coming soon
       </p>
+
+      {/* Public / Private toggle */}
+      <div
+        className="flex items-center justify-between p-4 rounded-2xl"
+        style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
+      >
+        <div className="flex-1 min-w-0 pr-3">
+          <p className="font-semibold text-[14px]" style={{ color: "var(--fg)" }}>
+            Show in Discover
+          </p>
+          <p className="text-[12px] mt-0.5" style={{ color: "var(--fg-muted)" }}>
+            {isPublic
+              ? "Your card will appear in the AddMe Discover page"
+              : "Only people with your direct link can find you"}
+          </p>
+        </div>
+
+        <div className="relative flex-shrink-0">
+          <button
+            onClick={() => {
+              if (isPublic) {
+                setShowPrivateTip(true);
+                setTimeout(() => setShowPrivateTip(false), 2400);
+              } else {
+                onTogglePublic(true);
+              }
+            }}
+            style={{
+              width: 46, height: 26, borderRadius: 13,
+              background: isPublic ? "#EC4899" : "rgba(148,163,184,0.3)",
+              position: "relative", transition: "background 0.2s", border: "none", cursor: "pointer",
+            }}
+          >
+            <div style={{
+              width: 20, height: 20, borderRadius: "50%", background: "#fff",
+              position: "absolute", top: 3,
+              left: isPublic ? 23 : 3,
+              transition: "left 0.2s",
+              boxShadow: "0 1px 4px rgba(0,0,0,0.25)",
+            }} />
+          </button>
+
+          {/* Premium tooltip when trying to go private */}
+          <AnimatePresence>
+            {showPrivateTip && (
+              <motion.div
+                initial={{ opacity: 0, y: 6, scale: 0.92 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 6, scale: 0.92 }}
+                transition={{ duration: 0.18 }}
+                style={{
+                  position: "absolute", right: 0, bottom: "calc(100% + 8px)",
+                  width: 200, zIndex: 30,
+                  background: "#EC4899", borderRadius: 14, padding: "10px 14px",
+                  boxShadow: "0 4px 20px rgba(236,72,153,0.4)",
+                }}
+              >
+                <p style={{ color: "#fff", fontSize: 12, fontWeight: 600, lineHeight: 1.4 }}>
+                  🔒 Private cards are a premium feature — coming soon!
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      </div>
     </div>
   );
 }
 
 // ─── step 5 ───────────────────────────────────────────────────────────────────
 
-function Step5({ details, cardType, mode, templateId, username }) {
+function Step5({ details, cardType, mode, templateId, username, isPublic }) {
   const cardRef = useRef(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -960,6 +1023,7 @@ function Step5({ details, cardType, mode, templateId, username }) {
           username: finalUsername,
           type: cardType,
           mode: cardType === "personal" ? mode : "group",
+          is_public: isPublic,
           name,
           bio,
           phone: convertPhone(details.phone) || null,
@@ -1201,6 +1265,7 @@ export default function CreatePage() {
   });
   const [templateId, setTemplateId] = useState("classic-dark");
   const [username, setUsername] = useState("");
+  const [isPublic, setIsPublic] = useState(true);
   const [usernameInput, setUsernameInput] = useState("");
   const [usernameStatus, setUsernameStatus] = useState("idle");
   const usernameTimerRef = useRef(null);
@@ -1354,6 +1419,8 @@ export default function CreatePage() {
                   details={details}
                   cardType={cardType}
                   onChange={setTemplateId}
+                  isPublic={isPublic}
+                  onTogglePublic={setIsPublic}
                 />
               )}
               {step === 5 && (
@@ -1363,6 +1430,7 @@ export default function CreatePage() {
                   mode={mode}
                   templateId={templateId}
                   username={username}
+                  isPublic={isPublic}
                 />
               )}
 

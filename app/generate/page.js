@@ -304,7 +304,7 @@ function Step1({ name, phone, bio, onChangeName, onChangePhone, onChangeBio }) {
         </label>
         <input
           className={inputCls}
-          placeholder="e.g. Simo"
+          placeholder="e.g. Simo, Simon, ItzIncredibleSimo"
           value={name}
           onChange={(e) => onChangeName(e.target.value)}
         />
@@ -318,7 +318,7 @@ function Step1({ name, phone, bio, onChangeName, onChangePhone, onChangeBio }) {
         <input
           className={inputCls}
           type="tel"
-          placeholder="0244 123 456 or +233244123456"
+          placeholder="0257 653 283 or +233257653283"
           value={phone}
           onChange={(e) => onChangePhone(e.target.value)}
         />
