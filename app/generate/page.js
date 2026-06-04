@@ -48,39 +48,53 @@ function shuffleArray(arr) {
 const GUIDE_STEPS = [
   {
     step: 3,
-    emoji: "📸",
-    title: "Step 1 — Pick your picture or video",
-    text: "Open your gallery and choose a good photo of yourself or a short video. This is what your friends will post on their status.",
-    bg: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
-    border: "rgba(99,102,241,0.35)",
-    glow: "rgba(99,102,241,0.12)",
+    emoji: "📎",
+    title: "Open WhatsApp and tap attach 📎",
+    text: "Open WhatsApp, go to any friend's chat and tap the attachment icon.",
+    bg: "linear-gradient(135deg, #0d1f2d 0%, #0f3460 100%)",
+    border: "rgba(56,189,248,0.35)",
+    glow: "rgba(56,189,248,0.1)",
+    hasMock: false,
   },
   {
     step: 4,
-    emoji: "💬",
-    title: "Step 2 — Send it to friends",
-    text: "Open WhatsApp and send the copied text to as many friends as possible. The more friends you send it to, the more people will see it.",
-    bg: "linear-gradient(135deg, #052e16 0%, #14532d 100%)",
-    border: "rgba(34,197,94,0.35)",
-    glow: "rgba(34,197,94,0.1)",
+    emoji: "📸",
+    title: "Pick your picture or video 📸",
+    text: "Select a good photo or short video of yourself from your gallery.",
+    bg: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%)",
+    border: "rgba(99,102,241,0.35)",
+    glow: "rgba(99,102,241,0.12)",
+    hasMock: false,
   },
   {
     step: 5,
-    emoji: "🖼️",
-    title: "Step 3 — Tell them to add your picture",
-    text: "Ask your friend to attach your picture or video when they post it on their status. A face gets way more attention than just text.",
-    bg: "linear-gradient(135deg, #1c0a03 0%, #431407 100%)",
-    border: "rgba(249,115,22,0.35)",
-    glow: "rgba(249,115,22,0.1)",
+    emoji: "👇",
+    title: "Paste your copied text in the caption 👇",
+    text: "In the caption field below your picture, paste the text you already copied. Your picture and link are now one complete message — exactly like this:",
+    bg: "linear-gradient(135deg, #052e16 0%, #14532d 100%)",
+    border: "rgba(34,197,94,0.35)",
+    glow: "rgba(34,197,94,0.1)",
+    hasMock: true,
   },
   {
     step: 6,
+    emoji: "💬",
+    title: "Send it to as many friends as possible 💬",
+    text: "Send that complete message to as many friends as you can. The more friends you send it to, the more people will see you.",
+    bg: "linear-gradient(135deg, #0c1445 0%, #1a2a6c 100%)",
+    border: "rgba(99,102,241,0.35)",
+    glow: "rgba(99,102,241,0.1)",
+    hasMock: false,
+  },
+  {
+    step: 7,
     emoji: "📢",
-    title: "Step 4 — Ask them to post on status",
-    text: "Ask your friends to post it on their WhatsApp status. Their contacts will see your face, read your bio, tap your link, and add you directly on WhatsApp.",
+    title: "Ask them to post it on their status ✅",
+    text: "Ask each friend to forward your message to their WhatsApp status. Their contacts will see your face, tap your link, and add you directly on WhatsApp.",
     bg: "linear-gradient(135deg, #1a0533 0%, #3b0764 100%)",
     border: "rgba(168,85,247,0.35)",
     glow: "rgba(168,85,247,0.12)",
+    hasMock: false,
   },
 ];
 
@@ -371,13 +385,54 @@ function Step2({ name, phone, bio, onNext }) {
   );
 }
 
+// ─── whatsapp mock bubble ─────────────────────────────────────────────────────
+
+function WhatsAppMock({ text }) {
+  return (
+    <div
+      className="rounded-2xl overflow-hidden w-full"
+      style={{ background: "#111b21", border: "1px solid rgba(255,255,255,0.08)" }}
+    >
+      {/* Picture placeholder */}
+      <div
+        className="w-full flex flex-col items-center justify-center gap-2 py-6"
+        style={{ background: "#2a3942" }}
+      >
+        <span className="text-5xl leading-none">🤳</span>
+        <p className="text-xs" style={{ color: "#8696a0" }}>your photo or video</p>
+      </div>
+
+      {/* Message bubble */}
+      <div className="p-3">
+        <div
+          className="rounded-xl rounded-tl-sm px-3 py-2.5"
+          style={{ background: "#005c4b", maxWidth: "100%" }}
+        >
+          <pre
+            className="text-[12px] leading-relaxed whitespace-pre-wrap break-words font-sans"
+            style={{ color: "#e9edef" }}
+          >
+            {text}
+          </pre>
+          <p className="text-[10px] text-right mt-1" style={{ color: "#8696a0" }}>
+            11:25 ✓✓
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── guide card ───────────────────────────────────────────────────────────────
 
-function GuideCard({ guide, onNext }) {
+function GuideCard({ guide, onNext, mockText }) {
   return (
     <div className="flex flex-col gap-5">
-      <div
-        className="rounded-2xl p-8 flex flex-col items-center text-center gap-4"
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="rounded-2xl p-6 flex flex-col items-center text-center gap-4"
         style={{
           background: guide.bg,
           border: `1px solid ${guide.border}`,
@@ -391,7 +446,14 @@ function GuideCard({ guide, onNext }) {
         <p className="text-sm leading-relaxed" style={{ color: "#cbd5e1", maxWidth: 280 }}>
           {guide.text}
         </p>
-      </div>
+
+        {/* WhatsApp mock preview — only on step 5 */}
+        {guide.hasMock && mockText && (
+          <div className="w-full mt-1">
+            <WhatsAppMock text={mockText} />
+          </div>
+        )}
+      </motion.div>
 
       <button
         onClick={onNext}
@@ -458,6 +520,10 @@ export default function GeneratePage() {
   const [bio, setBio] = useState("");
 
   const converted = convertPhone(phone);
+  const waUrl = `https://wa.me/${converted}`;
+  const firstPersonText = name
+    ? `Hi 👋 I'm ${name}\n${bio}\n\n*${waUrl}*`
+    : "";
 
   function canContinueStep1() {
     return name.trim() !== "" && isValidPhone(converted);
@@ -492,7 +558,7 @@ export default function GeneratePage() {
       style={{ background: "#080808", overflowX: "hidden" }}
     >
       <div className="max-w-lg mx-auto px-5 pt-14 pb-28">
-        <ProgressBar step={step} total={7} />
+        <ProgressBar step={step} total={8} />
 
         <div className="relative overflow-hidden">
           <AnimatePresence mode="popLayout" custom={direction} initial={false}>
@@ -504,7 +570,7 @@ export default function GeneratePage() {
               animate="center"
               exit="exit"
             >
-              {step > 1 && step < 7 && <BackBtn onClick={goBack} />}
+              {step > 1 && step < 8 && <BackBtn onClick={goBack} />}
 
               {step === 1 && (
                 <>
@@ -530,10 +596,14 @@ export default function GeneratePage() {
               )}
 
               {guideData && (
-                <GuideCard guide={guideData} onNext={goNext} />
+                <GuideCard
+                  guide={guideData}
+                  onNext={goNext}
+                  mockText={firstPersonText}
+                />
               )}
 
-              {step === 7 && <Step7 onReset={reset} />}
+              {step === 8 && <Step7 onReset={reset} />}
             </motion.div>
           </AnimatePresence>
         </div>
