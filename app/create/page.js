@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import imageCompression from "browser-image-compression";
 import { supabase } from "@/lib/supabase";
-import { premadeBios } from "@/data/bios";
+import { premadeBios, bioCategories, groupTaglines, groupTaglineCategories } from "@/data/bios";
 import { convertPhone, shuffleArray } from "@/lib/utils";
 import CardPreview from "@/components/CardPreview";
 
@@ -252,26 +252,59 @@ function ChoiceCard({ icon, title, desc, selected, onClick }) {
 // ─── BioGrid ─────────────────────────────────────────────────────────────────
 
 function BioGrid({ mode, cardType, selectedBio, onSelect }) {
-  const source = useMemo(() => {
-    if (cardType === "group") return premadeBios;
-    if (mode === "business")
-      return premadeBios.filter((b) =>
-        ["Business", "Professional"].includes(b.category)
-      );
-    return premadeBios.filter((b) => b.category === "Friendly");
-  }, [mode, cardType]);
+  const isGroup = cardType === "group";
 
-  const [pool, setPool] = useState(() => shuffleArray(source).slice(0, 8));
+  const allItems = useMemo(() => {
+    if (isGroup) return groupTaglines;
+    if (mode === "business")
+      return premadeBios.filter((b) => ["Business", "Professional"].includes(b.category));
+    return premadeBios.filter((b) => b.category === "Friendly");
+  }, [mode, isGroup]);
+
+  const categories = isGroup ? groupTaglineCategories : ["All", ...new Set(allItems.map(b => b.category))];
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [pool, setPool] = useState(() => shuffleArray(allItems).slice(0, 8));
+
+  const filtered = useMemo(() => {
+    const base = activeCategory === "All" ? allItems : allItems.filter(b => b.category === activeCategory);
+    return base;
+  }, [allItems, activeCategory]);
+
+  // Re-pool when category changes
+  useMemo(() => {
+    setPool(shuffleArray(filtered).slice(0, 8));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeCategory]);
 
   function handleShuffle() {
-    setPool(shuffleArray(source).slice(0, 8));
+    setPool(shuffleArray(filtered).slice(0, 8));
   }
 
   return (
     <div>
+      {/* Category tabs — only shown for group cards (personal bios already pre-filtered) */}
+      {isGroup && (
+        <div className="flex gap-1.5 overflow-x-auto pb-2 mb-3 scrollbar-hide -mx-1 px-1">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => setActiveCategory(cat)}
+              className="flex-shrink-0 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all"
+              style={{
+                background: activeCategory === cat ? "#EC4899" : "var(--bg-subtle)",
+                color: activeCategory === cat ? "#fff" : "var(--fg-muted)",
+                border: activeCategory === cat ? "none" : "1px solid var(--border)",
+              }}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="flex items-center justify-between mb-2.5">
         <p className="text-sm font-medium" style={{ color: "var(--fg-muted)" }}>
-          Premade bios
+          {isGroup ? "Suggested taglines" : "Premade bios"}
         </p>
         <button
           onClick={handleShuffle}
