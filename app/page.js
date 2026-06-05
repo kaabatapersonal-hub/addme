@@ -51,52 +51,91 @@ function CardMockup() {
       transition={{ duration: 4.5, repeat: Infinity, ease: "easeInOut" }}
       style={{ display: "inline-block" }}
     >
+      {/* Phone frame — matches the actual public card design */}
       <div style={{
-        background: "rgba(255,255,255,0.14)",
-        border: "1.5px solid rgba(255,255,255,0.3)",
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-        borderRadius: 24,
-        padding: "22px 22px 18px",
-        boxShadow: "0 28px 70px rgba(0,0,0,0.35)",
-        width: 210,
+        width: 195, height: 330,
+        borderRadius: 32, overflow: "hidden",
+        position: "relative",
+        boxShadow: "0 32px 80px rgba(0,0,0,0.45), 0 0 0 1.5px rgba(255,255,255,0.18)",
       }}>
-        <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
-          <div style={{
-            width: 62, height: 62, borderRadius: "50%",
-            background: "rgba(255,255,255,0.25)",
-            border: "3px solid rgba(255,255,255,0.5)",
-            display: "flex", alignItems: "center", justifyContent: "center", fontSize: 26,
-          }}>
-            🤳
-          </div>
-        </div>
-        <p style={{ textAlign: "center", color: "#fff", fontWeight: 700, fontSize: 15, marginBottom: 5 }}>
-          ItzIncredibleSimo 😎
-        </p>
-        <p style={{ textAlign: "center", color: "rgba(255,255,255,0.72)", fontSize: 11, lineHeight: 1.55, marginBottom: 16 }}>
-          Online but mentally unavailable 😂
-        </p>
+        {/* Simulated full-screen photo background */}
         <div style={{
-          background: "#25D366", borderRadius: 14, padding: "12px 0",
-          display: "flex", alignItems: "center", justifyContent: "center", gap: 8,
-          boxShadow: "0 4px 18px rgba(37,211,102,0.4)",
+          position: "absolute", inset: 0,
+          background: "linear-gradient(160deg, #2d1b69 0%, #7c3aed 45%, #db2777 85%, #f97316 100%)",
+        }} />
+        {/* Cinematic gradient overlay */}
+        <div style={{
+          position: "absolute", inset: 0,
+          background: "linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.85) 85%)",
+        }} />
+        {/* Avatar in upper half */}
+        <div style={{
+          position: "absolute", top: "30%", left: "50%",
+          transform: "translate(-50%, -50%)",
+          width: 60, height: 60, borderRadius: "50%",
+          background: "rgba(255,255,255,0.2)",
+          border: "2.5px solid rgba(255,255,255,0.45)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: 26,
         }}>
-          <WAIcon size={14} />
-          <span style={{ color: "#fff", fontWeight: 600, fontSize: 13 }}>Add me on WhatsApp</span>
+          🤳
         </div>
-        <p style={{ textAlign: "center", color: "rgba(255,255,255,0.35)", fontSize: 10, marginTop: 11 }}>
-          👁 247 views
-        </p>
+        {/* Content pinned to bottom */}
+        <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 14px 14px" }}>
+          <p style={{ color: "#fff", fontWeight: 700, fontSize: 14, marginBottom: 3, lineHeight: 1.2 }}>
+            ItzIncredibleSimo 😎
+          </p>
+          <p style={{ color: "rgba(255,255,255,0.7)", fontSize: 10, lineHeight: 1.5, marginBottom: 12 }}>
+            Online but mentally unavailable 😂
+          </p>
+          <div style={{
+            background: "#25D366", borderRadius: 11, padding: "10px 0",
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 6,
+            boxShadow: "0 3px 14px rgba(37,211,102,0.45)",
+          }}>
+            <WAIcon size={12} />
+            <span style={{ color: "#fff", fontWeight: 700, fontSize: 11 }}>Add me on WhatsApp</span>
+          </div>
+          <p style={{ textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 8, marginTop: 7, letterSpacing: "0.12em" }}>
+            ADDME.APP
+          </p>
+        </div>
       </div>
     </motion.div>
   );
 }
 
 const HOW_IT_WORKS = [
-  { n: "01", icon: "✏️", title: "Fill in your details", desc: "Name, photo, bio, phone number. Takes 30 seconds." },
-  { n: "02", icon: "📲", title: "Share your card", desc: "Post on your WhatsApp status or send the link to friends." },
-  { n: "03", icon: "🎉", title: "People add you", desc: "They tap your link and add you instantly. No friction." },
+  {
+    n: "01",
+    title: "Fill in your details",
+    desc: "Name, photo, bio, phone number. Takes 30 seconds.",
+    icon: (
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+      </svg>
+    ),
+  },
+  {
+    n: "02",
+    title: "Share your card",
+    desc: "Post on your WhatsApp status or send the link to friends.",
+    icon: (
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+      </svg>
+    ),
+  },
+  {
+    n: "03",
+    title: "People add you",
+    desc: "They tap your link and add you instantly. No friction.",
+    icon: (
+      <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+      </svg>
+    ),
+  },
 ];
 
 function RecentCards() {
@@ -105,7 +144,7 @@ function RecentCards() {
   useEffect(() => {
     supabase
       .from("cards")
-      .select("username, name, bio, image_url, type, phone, group_link")
+      .select("username, name, bio, image_url, image_position, type, phone, group_link")
       .order("created_at", { ascending: false })
       .limit(6)
       .then(({ data }) => setCards(data || []));
@@ -138,7 +177,7 @@ function RecentCards() {
             {card.image_url && (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={card.image_url} alt={card.name}
-                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+                style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", objectPosition: card.image_position || "center" }} />
             )}
             {!card.image_url && (
               <div style={{
@@ -175,12 +214,22 @@ function RecentCards() {
 
 export default function HomePage() {
   const [cardCount, setCardCount] = useState(null);
+  const [fromCard, setFromCard] = useState(false);
+  const [creatorName, setCreatorName] = useState("");
 
   useEffect(() => {
     supabase
       .from("cards")
       .select("id", { count: "exact", head: true })
       .then(({ count }) => { if (count) setCardCount(count); });
+  }, []);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("from") === "card") {
+      setFromCard(true);
+      setCreatorName(params.get("creator") || "");
+    }
   }, []);
 
   return (
@@ -236,17 +285,49 @@ export default function HomePage() {
 
           <FadeUp delay={0.26}>
             <div className="w-full flex flex-col gap-3">
-              <Link href="/create"
-                className="w-full flex items-center justify-center gap-2.5 font-bold text-white rounded-2xl transition-all duration-200 active:scale-[0.97]"
-                style={{ background: "rgba(255,255,255,0.22)", border: "1.5px solid rgba(255,255,255,0.35)", padding: "17px 0", fontSize: 16, backdropFilter: "blur(8px)" }}>
-                ✨ Create my AddMe card
-              </Link>
 
-              <Link href="/generate"
-                className="w-full flex items-center justify-center gap-2 font-semibold rounded-2xl transition-all duration-200 active:scale-[0.97]"
-                style={{ background: "rgba(255,255,255,0.1)", border: "1.5px solid rgba(255,255,255,0.18)", color: "#fff", padding: "15px 0", fontSize: 15 }}>
-                ⚡ Just get my WhatsApp link
-              </Link>
+              {/* Contextual banner when arriving from someone's card */}
+              {fromCard && (
+                <div className="text-center mb-1 px-2">
+                  <p className="text-[14px] font-semibold" style={{ color: "#fff" }}>
+                    {creatorName ? `Want a card like ${creatorName}'s?` : "Want one like that?"}
+                  </p>
+                  <p className="text-[12px] mt-0.5" style={{ color: "rgba(255,255,255,0.55)" }}>
+                    Pick the option that suits you 👇
+                  </p>
+                </div>
+              )}
+
+              {/* Option A — full card */}
+              <div>
+                <Link href="/create"
+                  className="w-full flex flex-col items-center justify-center rounded-2xl transition-all duration-200 active:scale-[0.97]"
+                  style={{ background: "#fff", color: "#7C3AED", padding: "15px 0 13px", boxShadow: "0 4px 24px rgba(255,255,255,0.25)" }}>
+                  <span className="font-bold text-[16px]">✨ Create my AddMe card</span>
+                  <span className="text-[11px] mt-0.5" style={{ color: "#9D174D", opacity: 0.75 }}>
+                    Photo · bio · shareable profile link
+                  </span>
+                </Link>
+              </div>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 px-1">
+                <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.15)" }} />
+                <span className="text-[11px]" style={{ color: "rgba(255,255,255,0.38)" }}>or</span>
+                <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.15)" }} />
+              </div>
+
+              {/* Option B — quick link */}
+              <div>
+                <Link href="/generate"
+                  className="w-full flex flex-col items-center justify-center rounded-2xl transition-all duration-200 active:scale-[0.97]"
+                  style={{ background: "rgba(255,255,255,0.1)", border: "1.5px solid rgba(255,255,255,0.18)", color: "#fff", padding: "14px 0 12px" }}>
+                  <span className="font-semibold text-[15px]">⚡ Just get my WhatsApp link</span>
+                  <span className="text-[11px] mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>
+                    Instant wa.me link — no photo or bio needed
+                  </span>
+                </Link>
+              </div>
 
               <Link href="/find"
                 className="flex items-center justify-center gap-1.5 text-sm font-medium transition-opacity active:opacity-60 mt-1"
@@ -257,12 +338,8 @@ export default function HomePage() {
           </FadeUp>
         </div>
 
-        {/* Wave bottom */}
-        <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none" style={{ height: 48 }}>
-          <svg viewBox="0 0 1200 48" preserveAspectRatio="none" style={{ width: "100%", height: "100%" }}>
-            <path d="M0,48 C300,0 900,0 1200,48 L1200,48 L0,48 Z" fill="var(--bg-page)" />
-          </svg>
-        </div>
+        {/* Fade to page background */}
+        <div className="absolute bottom-0 left-0 right-0" style={{ height: 60, background: "linear-gradient(to bottom, transparent, var(--bg-page))" }} />
       </section>
 
       {/* ── Body — themed ─────────────────────────────────────── */}
@@ -281,8 +358,8 @@ export default function HomePage() {
             <ScrollFadeUp key={step.n} delay={i * 0.07}>
               <div className="flex items-start gap-4 p-5 rounded-2xl transition-shadow"
                 style={{ background: "var(--bg-card)", border: "1px solid var(--border)", boxShadow: "var(--shadow)" }}>
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0"
-                  style={{ background: "rgba(236,72,153,0.1)", border: "1px solid rgba(236,72,153,0.18)" }}>
+                <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0"
+                  style={{ background: "rgba(236,72,153,0.1)", border: "1px solid rgba(236,72,153,0.18)", color: "#EC4899" }}>
                   {step.icon}
                 </div>
                 <div className="pt-0.5">
@@ -301,16 +378,18 @@ export default function HomePage() {
       {/* ── Stats ─────────────────────────────────────────────── */}
       <section className="px-5 pb-20 max-w-lg mx-auto">
         <ScrollFadeUp>
-          <div className="grid grid-cols-3 gap-px rounded-2xl overflow-hidden"
-            style={{ background: "var(--border)", border: "1px solid var(--border)" }}>
+          <div className="grid grid-cols-3 gap-3">
             {[
               { value: cardCount ? `${cardCount}+` : "—", label: "Cards created" },
-              { value: "Free", label: "Always" },
-              { value: "0", label: "Signups needed" },
+              { value: "Free", label: "Always & forever" },
+              { value: "None", label: "Signup needed" },
             ].map((s) => (
-              <div key={s.label} className="text-center py-5 px-2" style={{ background: "var(--bg-card)" }}>
-                <p className="font-heading font-bold text-xl" style={{ color: "var(--fg)" }}>{s.value}</p>
-                <p className="text-[11px] mt-0.5" style={{ color: "var(--fg-muted)" }}>{s.label}</p>
+              <div key={s.label} className="text-center py-6 px-2 rounded-2xl"
+                style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}>
+                <p className="font-heading font-bold" style={{ fontSize: "1.55rem", lineHeight: 1.1, color: "var(--fg)" }}>
+                  {s.value}
+                </p>
+                <p className="text-[11px] mt-2 leading-snug" style={{ color: "var(--fg-muted)" }}>{s.label}</p>
               </div>
             ))}
           </div>
@@ -350,20 +429,29 @@ export default function HomePage() {
             <h2 className="font-heading text-[1.6rem] font-bold text-white mb-2 leading-tight">
               Ready to grow your WhatsApp?
             </h2>
-            <p className="text-sm mb-7" style={{ color: "rgba(255,255,255,0.75)" }}>
+            <p className="text-sm mb-6" style={{ color: "rgba(255,255,255,0.75)" }}>
               Free forever. No account. No waiting.
             </p>
-            <Link href="/create"
-              className="inline-flex items-center gap-2 font-bold px-8 py-4 rounded-2xl text-[15px] transition-all duration-200 active:scale-[0.97]"
-              style={{ background: "rgba(255,255,255,0.22)", color: "#fff", border: "1.5px solid rgba(255,255,255,0.35)" }}>
-              Get started free →
-            </Link>
+            <div className="flex flex-col gap-3">
+              <Link href="/create"
+                className="flex flex-col items-center font-bold px-8 py-4 rounded-2xl text-[15px] transition-all duration-200 active:scale-[0.97]"
+                style={{ background: "rgba(255,255,255,0.22)", color: "#fff", border: "1.5px solid rgba(255,255,255,0.35)" }}>
+                <span>✨ Create my AddMe card</span>
+                <span className="text-[11px] font-normal mt-0.5" style={{ color: "rgba(255,255,255,0.6)" }}>Photo · bio · shareable link</span>
+              </Link>
+              <Link href="/generate"
+                className="flex flex-col items-center font-semibold px-8 py-3.5 rounded-2xl text-[14px] transition-all duration-200 active:scale-[0.97]"
+                style={{ background: "rgba(255,255,255,0.1)", color: "#fff", border: "1px solid rgba(255,255,255,0.2)" }}>
+                <span>⚡ Just get my WhatsApp link</span>
+                <span className="text-[11px] font-normal mt-0.5" style={{ color: "rgba(255,255,255,0.5)" }}>Instant · no photo needed</span>
+              </Link>
+            </div>
           </div>
         </ScrollFadeUp>
       </section>
 
-      <footer className="text-center py-8 text-xs" style={{ color: "var(--fg-dim)" }}>
-        Made with SimoForge ⚡
+      <footer className="text-center py-8 text-xs" style={{ color: "var(--fg-dim)", letterSpacing: "0.05em" }}>
+        © AddMe · Made in Ghana 🇬🇭
       </footer>
     </main>
   );

@@ -48,7 +48,7 @@ function CardTile({ card }) {
           style={{
             position: "absolute", inset: 0,
             width: "100%", height: "100%",
-            objectFit: "cover", objectPosition: "center top",
+            objectFit: "cover", objectPosition: card.image_position || "center",
           }}
         />
       )}
@@ -100,9 +100,16 @@ function CardTile({ card }) {
         </div>
       )}
 
-      {/* Content pinned to bottom — tap name/bio to open full card */}
-      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 10px 10px" }}>
-        <Link href={`/${card.username}`} style={{ textDecoration: "none", display: "block", marginBottom: 8 }}>
+      {/* Transparent full-card link — tapping anywhere on the photo opens the profile */}
+      <Link
+        href={`/${card.username}`}
+        style={{ position: "absolute", inset: 0, zIndex: 1, textDecoration: "none" }}
+        aria-label={`View ${card.name}'s card`}
+      />
+
+      {/* Content pinned to bottom — sits above the link overlay */}
+      <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 10px 10px", zIndex: 2 }}>
+        <div style={{ marginBottom: 8, pointerEvents: "none" }}>
           <p style={{
             color: "#fff", fontWeight: 700, fontSize: 13, lineHeight: 1.3,
             overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
@@ -120,15 +127,16 @@ function CardTile({ card }) {
               {card.bio}
             </p>
           )}
-        </Link>
+        </div>
 
-        {/* WhatsApp button */}
+        {/* WhatsApp button — zIndex above the card link so it works independently */}
         {waHref && (
           <a
             href={waHref}
             target="_blank"
             rel="noopener noreferrer"
             style={{
+              position: "relative", zIndex: 3,
               display: "flex", alignItems: "center", justifyContent: "center", gap: 5,
               background: "#25D366", color: "#fff", borderRadius: 10,
               padding: "9px 0", fontWeight: 700, fontSize: 12,
@@ -149,11 +157,12 @@ export default function CardsPage() {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [sortBy, setSortBy] = useState("latest"); // "latest" | "trending"
 
   useEffect(() => {
     supabase
       .from("cards")
-      .select("username, name, bio, image_url, type, phone, group_link, views, created_at")
+      .select("username, name, bio, image_url, image_position, type, phone, group_link, views, created_at")
       .order("created_at", { ascending: false })
       .limit(60)
       .then(({ data }) => {
@@ -162,12 +171,18 @@ export default function CardsPage() {
       });
   }, []);
 
-  const filtered = search.trim()
-    ? cards.filter((c) =>
-        c.name?.toLowerCase().includes(search.toLowerCase()) ||
-        c.bio?.toLowerCase().includes(search.toLowerCase())
-      )
-    : cards;
+  const filtered = (() => {
+    let list = search.trim()
+      ? cards.filter((c) =>
+          c.name?.toLowerCase().includes(search.toLowerCase()) ||
+          c.bio?.toLowerCase().includes(search.toLowerCase())
+        )
+      : [...cards];
+    if (sortBy === "trending") {
+      list = list.sort((a, b) => (b.views ?? 0) - (a.views ?? 0));
+    }
+    return list;
+  })();
 
   return (
     <main className="min-h-screen" style={{ background: "var(--bg-page)", overflowX: "hidden" }}>
@@ -215,14 +230,35 @@ export default function CardsPage() {
           />
         </div>
 
+        {/* Sort tabs */}
+        <div className="flex gap-2 mb-5">
+          {[
+            { key: "latest", label: "Latest" },
+            { key: "trending", label: "🔥 Trending" },
+          ].map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => setSortBy(tab.key)}
+              className="px-4 py-2 rounded-xl text-[13px] font-semibold transition-all"
+              style={{
+                background: sortBy === tab.key ? "#EC4899" : "var(--bg-card)",
+                color: sortBy === tab.key ? "#fff" : "var(--fg-muted)",
+                border: sortBy === tab.key ? "none" : "1px solid var(--border)",
+              }}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
         {/* Grid */}
         {loading ? (
           <div className="grid grid-cols-2 gap-3">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl"
-                style={{ aspectRatio: "3/4", background: "var(--bg-card)", border: "1px solid var(--border)", opacity: 0.4 }}
+                className="rounded-2xl shimmer"
+                style={{ aspectRatio: "3/4" }}
               />
             ))}
           </div>
@@ -265,8 +301,8 @@ export default function CardsPage() {
         </div>
       </div>
 
-      <footer className="text-center py-6 text-xs" style={{ color: "var(--fg-dim)" }}>
-        Made with SimoForge ⚡
+      <footer className="text-center py-6 text-xs" style={{ color: "var(--fg-dim)", letterSpacing: "0.05em" }}>
+        © AddMe · Made in Ghana 🇬🇭
       </footer>
     </main>
   );

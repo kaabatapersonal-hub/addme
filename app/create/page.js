@@ -111,6 +111,10 @@ const TEMPLATES = [
   },
 ];
 
+// ─── feature flags ────────────────────────────────────────────────────────────
+// Set to false when ready to charge for premium templates
+const UNLOCK_PREMIUM = true;
+
 // ─── helpers ──────────────────────────────────────────────────────────────────
 
 function convertPhone(raw) {
@@ -159,21 +163,26 @@ const inputCls = "addme-input";
 
 // ─── atoms ────────────────────────────────────────────────────────────────────
 
+const STEP_LABELS = ["Card type", "Your style", "Your details", "Settings", "Done!"];
+
 function ProgressBar({ step }) {
   const total = 5;
   const pct = Math.round(((step - 1) / (total - 1)) * 100);
+  const label = STEP_LABELS[step - 1] ?? "";
   return (
     <div className="mb-8">
-      <div className="flex items-center justify-between mb-2">
-        <p className="text-[11px] font-semibold" style={{ color: "rgba(148,163,184,0.5)" }}>
-          Step {step} of {total}
+      <div className="flex items-center justify-between mb-2.5">
+        <p className="text-[12px] font-bold" style={{ color: "var(--fg)" }}>
+          {label}
         </p>
-        <p className="text-[11px] font-bold" style={{ color: "#EC4899" }}>{pct}%</p>
+        <p className="text-[11px] font-medium" style={{ color: "var(--fg-dim)" }}>
+          {step} / {total}
+        </p>
       </div>
-      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+      <div className="h-2 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
         <motion.div
           className="h-full rounded-full"
-          style={{ background: "linear-gradient(90deg, #EC4899 0%, #f472b6 100%)" }}
+          style={{ background: "linear-gradient(90deg, #a855f7 0%, #EC4899 100%)" }}
           initial={false}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -613,6 +622,38 @@ function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus,
         }
       />
 
+      {/* Photo position picker — only when photo uploaded */}
+      {details.imagePreview && (
+        <div>
+          <label className="block text-xs font-semibold mb-2 uppercase tracking-wide" style={{ color: "var(--fg-muted)" }}>
+            Photo position on card
+          </label>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { value: "top", label: "👆 Top" },
+              { value: "center", label: "🎯 Center" },
+              { value: "bottom", label: "👇 Bottom" },
+            ].map((opt) => (
+              <button
+                key={opt.value}
+                onClick={() => set("imagePosition", opt.value)}
+                className="py-2.5 rounded-xl text-xs font-semibold transition-all"
+                style={{
+                  background: (details.imagePosition || "center") === opt.value ? "rgba(236,72,153,0.1)" : "var(--bg-subtle)",
+                  border: (details.imagePosition || "center") === opt.value ? "1.5px solid #EC4899" : "1px solid var(--border)",
+                  color: (details.imagePosition || "center") === opt.value ? "#EC4899" : "var(--fg-muted)",
+                }}
+              >
+                {opt.label}
+              </button>
+            ))}
+          </div>
+          <p className="text-[11px] mt-1.5" style={{ color: "var(--fg-dim)" }}>
+            Controls how your photo is framed on your public card
+          </p>
+        </div>
+      )}
+
       {/* Bio grid + custom */}
       <div>
         <label className="block text-sm font-medium mb-3" style={{ color: "var(--fg-muted)" }}>
@@ -632,6 +673,7 @@ function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus,
           onChange={(e) => set("bio", e.target.value)}
         />
       </div>
+
     </div>
   );
 }
@@ -736,7 +778,7 @@ function TemplateMiniCard({ template, name, imagePreview, selected, onClick }) {
   const initial = (name || "Y").charAt(0).toUpperCase();
 
   function handleClick() {
-    if (template.premium) {
+    if (template.premium && !UNLOCK_PREMIUM) {
       setShowTip(true);
       setTimeout(() => setShowTip(false), 2200);
       return;
@@ -824,8 +866,8 @@ function TemplateMiniCard({ template, name, imagePreview, selected, onClick }) {
           </div>
         </div>
 
-        {/* Premium dim overlay */}
-        {template.premium && (
+        {/* Premium dim overlay — only when not unlocked */}
+        {template.premium && !UNLOCK_PREMIUM && (
           <div
             className="absolute inset-0 flex items-end justify-center pb-2"
             style={{ background: "rgba(0,0,0,0.5)" }}
@@ -877,7 +919,7 @@ function TemplateMiniCard({ template, name, imagePreview, selected, onClick }) {
 
 // ─── step 4 ───────────────────────────────────────────────────────────────────
 
-function Step4({ templateId, details, cardType, onChange, isPublic, onTogglePublic }) {
+function Step4({ templateId, details, cardType, onChange, isPublic, onTogglePublic, hideBranding, onToggleHideBranding }) {
   const name = cardType === "group" ? details.groupName : details.name;
   const [showPrivateTip, setShowPrivateTip] = useState(false);
 
@@ -897,14 +939,14 @@ function Step4({ templateId, details, cardType, onChange, isPublic, onTogglePubl
             template={t}
             name={name}
             imagePreview={details.imagePreview}
-            selected={templateId === t.id && !t.premium}
+            selected={templateId === t.id && (!t.premium || UNLOCK_PREMIUM)}
             onClick={() => onChange(t.id)}
           />
         ))}
       </div>
 
       <p className="text-xs text-center mt-4 mb-5" style={{ color: "rgba(148,163,184,0.45)" }}>
-        Scroll to see all · Premium templates coming soon
+        Scroll to see all styles · All unlocked free 🎉
       </p>
 
       {/* Public / Private toggle */}
@@ -971,13 +1013,46 @@ function Step4({ templateId, details, cardType, onChange, isPublic, onTogglePubl
           </AnimatePresence>
         </div>
       </div>
+      {/* Hide branding toggle */}
+      <div
+        className="flex items-center justify-between p-4 rounded-2xl mt-3"
+        style={{ background: "var(--bg-card)", border: "1px solid var(--border)" }}
+      >
+        <div className="flex-1 min-w-0 pr-3">
+          <div className="flex items-center gap-2 mb-0.5">
+            <p className="font-semibold text-[14px]" style={{ color: "var(--fg)" }}>Hide AddMe branding</p>
+            <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full" style={{ background: "rgba(236,72,153,0.12)", color: "#EC4899", letterSpacing: "0.06em" }}>FREE NOW</span>
+          </div>
+          <p className="text-[12px]" style={{ color: "var(--fg-muted)" }}>
+            {hideBranding
+              ? "Visitors won't see the AddMe signup prompt on your card"
+              : "Visitors will see a small AddMe prompt at the bottom"}
+          </p>
+        </div>
+        <button
+          onClick={() => onToggleHideBranding(!hideBranding)}
+          style={{
+            width: 46, height: 26, borderRadius: 13, flexShrink: 0,
+            background: hideBranding ? "#EC4899" : "rgba(148,163,184,0.3)",
+            position: "relative", transition: "background 0.2s", border: "none", cursor: "pointer",
+          }}
+        >
+          <div style={{
+            width: 20, height: 20, borderRadius: "50%", background: "#fff",
+            position: "absolute", top: 3,
+            left: hideBranding ? 23 : 3,
+            transition: "left 0.2s",
+            boxShadow: "0 1px 4px rgba(0,0,0,0.25)",
+          }} />
+        </button>
+      </div>
     </div>
   );
 }
 
 // ─── step 5 ───────────────────────────────────────────────────────────────────
 
-function Step5({ details, cardType, mode, templateId, username, isPublic }) {
+function Step5({ details, cardType, mode, templateId, username, isPublic, imagePosition, hideBranding }) {
   const cardRef = useRef(null);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -1027,16 +1102,29 @@ function Step5({ details, cardType, mode, templateId, username, isPublic }) {
           bio,
           phone: convertPhone(details.phone) || null,
           image_url: imageUrl,
+          image_position: details.imagePosition || "center",
           template: templateId,
           group_link: details.inviteLink || null,
+          instagram: details.instagram || null,
+          tiktok: details.tiktok || null,
+          twitter: details.twitter || null,
+          hide_branding: hideBranding,
         };
 
         // Include is_public if the column exists (added via SQL migration)
         let { error: insertError } = await supabase.from("cards").insert({ ...cardData, is_public: isPublic });
 
-        // If is_public column missing (migration not run yet), retry without it
-        if (insertError && insertError.message?.includes("is_public")) {
-          const result = await supabase.from("cards").insert(cardData);
+        // If optional columns missing (migration not run yet), retry without them
+        if (insertError && (
+          insertError.message?.includes("is_public") ||
+          insertError.message?.includes("image_position") ||
+          insertError.message?.includes("instagram") ||
+          insertError.message?.includes("tiktok") ||
+          insertError.message?.includes("twitter") ||
+          insertError.message?.includes("hide_branding")
+        )) {
+          const { is_public: _ip, image_position: _pos, instagram: _ig, tiktok: _tt, twitter: _tw, hide_branding: _hb, ...safeData } = { ...cardData, is_public: isPublic };
+          const result = await supabase.from("cards").insert(safeData);
           insertError = result.error;
         }
 
@@ -1116,16 +1204,73 @@ function Step5({ details, cardType, mode, templateId, username, isPublic }) {
         </p>
       </div>
 
-      {/* Card preview — ref'd for html2canvas */}
+      {/* Phone-frame preview — matches the actual public card design */}
       <div className="flex justify-center">
-        <CardPreview
+        <div
           ref={cardRef}
-          name={name}
-          bio={bio}
-          imagePreview={details.imagePreview}
-          template={template}
-          cardType={cardType}
-        />
+          style={{
+            width: 220, height: 370,
+            borderRadius: 24, overflow: "hidden",
+            position: "relative", flexShrink: 0,
+            background: details.imagePreview ? "#0a0a0a" : "linear-gradient(160deg, #1a0533, #6D28D9, #EC4899)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.35)",
+            border: "2px solid rgba(255,255,255,0.1)",
+          }}
+        >
+          {details.imagePreview && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={details.imagePreview}
+              alt={name}
+              style={{
+                position: "absolute", inset: 0,
+                width: "100%", height: "100%",
+                objectFit: "cover",
+                objectPosition: imagePosition || "center",
+              }}
+            />
+          )}
+          {!details.imagePreview && (
+            <div style={{
+              position: "absolute", top: "30%", left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 64, height: 64, borderRadius: "50%",
+              background: "rgba(255,255,255,0.2)",
+              border: "2px solid rgba(255,255,255,0.35)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontSize: 28, fontWeight: 700, color: "#fff",
+            }}>
+              {(name || "?").charAt(0).toUpperCase()}
+            </div>
+          )}
+          <div style={{
+            position: "absolute", inset: 0,
+            background: "linear-gradient(to bottom, rgba(0,0,0,0) 25%, rgba(0,0,0,0.55) 58%, rgba(0,0,0,0.92) 100%)",
+          }} />
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "0 14px 14px" }}>
+            <p style={{ color: "#fff", fontWeight: 700, fontSize: 15, marginBottom: bio ? 4 : 12, lineHeight: 1.3, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+              {name || "Your name"}
+            </p>
+            {bio && (
+              <p style={{ color: "rgba(255,255,255,0.75)", fontSize: 11, lineHeight: 1.5, marginBottom: 12,
+                display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+                {bio}
+              </p>
+            )}
+            <div style={{
+              background: "#25D366", borderRadius: 12, padding: "11px 0",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              gap: 7, color: "#fff", fontWeight: 700, fontSize: 13,
+              boxShadow: "0 3px 12px rgba(37,211,102,0.35)",
+            }}>
+              <svg width="14" height="14" fill="white" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              {cardType === "group" ? "Join our Group" : "Add me on WhatsApp"}
+            </div>
+            <p style={{ textAlign: "center", color: "rgba(255,255,255,0.2)", fontSize: 9, marginTop: 8, letterSpacing: "0.12em" }}>
+              ADDME.APP
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Link row */}
@@ -1229,16 +1374,44 @@ function Step5({ details, cardType, mode, templateId, username, isPublic }) {
         </div>
       </div>
 
-      <p className="text-xs text-center" style={{ color: "var(--fg-dim)" }}>
-        Share your card with friends and ask them to post it on their status 👀
-      </p>
-      <p className="text-[11px] text-center mt-1" style={{ color: "var(--fg-dim)" }}>
+      {/* Invite a friend to AddMe */}
+      <a
+        href={`https://wa.me/?text=${encodeURIComponent(`I just made my WhatsApp card on AddMe — people can add me with one tap 🔥\n\nMake yours free at addme.app 👇`)}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="w-full py-3.5 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.98]"
+        style={{
+          background: "var(--bg-card)",
+          border: "1.5px solid rgba(236,72,153,0.35)",
+          color: "#EC4899",
+        }}
+      >
+        <svg width="15" height="15" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} style={{ flexShrink: 0 }}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+        </svg>
+        Invite a friend to AddMe
+      </a>
+
+      {/* Stats link */}
+      <Link
+        href={`/stats/${username}`}
+        target="_blank"
+        className="flex items-center justify-center gap-1.5 text-[13px] font-medium transition-opacity hover:opacity-70"
+        style={{ color: "var(--fg-dim)" }}
+      >
+        <svg width="13" height="13" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        Track your card views →
+      </Link>
+
+      <p className="text-[11px] text-center" style={{ color: "var(--fg-dim)" }}>
         Your page is live at {displayUrl}/<span style={{ color: "#EC4899" }}>{username}</span>
       </p>
 
       <Link
         href="/"
-        className="block w-full py-3 mt-2 rounded-2xl font-medium text-[14px] text-center transition-all duration-200 active:scale-[0.98]"
+        className="block w-full py-3 rounded-2xl font-medium text-[14px] text-center transition-all duration-200 active:scale-[0.98]"
         style={{ color: "var(--fg-dim)" }}
       >
         ← Back to home
@@ -1272,6 +1445,7 @@ export default function CreatePage() {
     phone2: "",
     imageFile: null,
     imagePreview: null,
+    imagePosition: "center",
     bio: "",
     groupName: "",
     groupDesc: "",
@@ -1281,6 +1455,7 @@ export default function CreatePage() {
   const [templateId, setTemplateId] = useState("classic-dark");
   const [username, setUsername] = useState("");
   const [isPublic, setIsPublic] = useState(true);
+  const [hideBranding, setHideBranding] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [usernameStatus, setUsernameStatus] = useState("idle");
   const usernameTimerRef = useRef(null);
@@ -1453,6 +1628,8 @@ export default function CreatePage() {
                   onChange={setTemplateId}
                   isPublic={isPublic}
                   onTogglePublic={setIsPublic}
+                  hideBranding={hideBranding}
+                  onToggleHideBranding={setHideBranding}
                 />
               )}
               {step === 5 && (
@@ -1463,6 +1640,8 @@ export default function CreatePage() {
                   templateId={templateId}
                   username={username}
                   isPublic={isPublic}
+                  imagePosition={details.imagePosition}
+                  hideBranding={hideBranding}
                 />
               )}
 

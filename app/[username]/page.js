@@ -1,6 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
 import { ShareButton } from "@/components/ShareButton";
+import { getMilestoneHit, sendViewMilestoneNotification } from "@/lib/notify";
 
 function getSupabase() {
   return createClient(
@@ -82,7 +83,22 @@ export default async function CardPage({ params }) {
 
   if (error || !card) return <NotFound />;
 
-  supabase.from("cards").update({ views: (card.views ?? 0) + 1 }).eq("username", username).then(() => {});
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "https://addme-app-silk.vercel.app").replace(/\/$/, "");
+
+  const prevViews = card.views ?? 0;
+  const newViews = prevViews + 1;
+  const milestone = getMilestoneHit(prevViews, newViews);
+
+  supabase.from("cards")
+    .update({ views: newViews, ...(milestone ? { last_notified_views: newViews } : {}) })
+    .eq("username", username)
+    .then(() => {});
+
+  // Send WhatsApp notification when a view milestone is hit.
+  // Only fires when last_notified_views column exists (migration has been run).
+  if (milestone && card.phone && typeof card.last_notified_views === "number") {
+    sendViewMilestoneNotification(card, milestone, baseUrl).catch(() => {});
+  }
 
   const isGroup = card.type === "group";
   const displayName = card.name || "Unknown";
@@ -92,8 +108,6 @@ export default async function CardPage({ params }) {
   const waHref = isGroup
     ? card.group_link
     : `https://wa.me/${convertForWa(card.phone || "")}`;
-
-  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "https://addme-app-silk.vercel.app").replace(/\/$/, "");
   const cardUrl = `${baseUrl}/${username}`;
 
   const hasImage = Boolean(card.image_url);
@@ -110,7 +124,7 @@ export default async function CardPage({ params }) {
           style={{
             position: "fixed", inset: 0,
             width: "100%", height: "100%",
-            objectFit: "cover", objectPosition: "center top",
+            objectFit: "cover", objectPosition: card.image_position || "center",
           }}
         />
       ) : (
@@ -120,12 +134,12 @@ export default async function CardPage({ params }) {
         }} />
       )}
 
-      {/* Gradient overlay — heavier at bottom for text readability */}
+      {/* Gradient overlay — cinematic: clear at top, heavy at bottom */}
       <div style={{
         position: "fixed", inset: 0,
         background: hasImage
-          ? "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.55) 60%, rgba(0,0,0,0.88) 80%, rgba(0,0,0,0.96) 100%)"
-          : "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.45) 100%)",
+          ? "linear-gradient(to bottom, transparent 0%, transparent 35%, rgba(0,0,0,0.48) 62%, rgba(0,0,0,0.84) 82%, rgba(0,0,0,0.96) 100%)"
+          : "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.5) 100%)",
       }} />
 
       {/* Views badge — top left */}
@@ -141,6 +155,19 @@ export default async function CardPage({ params }) {
           👁 {card.views.toLocaleString()} view{card.views !== 1 ? "s" : ""}
         </div>
       )}
+
+      {/* AddMe brand watermark — top right */}
+      <div style={{
+        position: "fixed", top: 18, right: 18, zIndex: 50,
+        background: "rgba(0,0,0,0.3)",
+        backdropFilter: "blur(10px)", WebkitBackdropFilter: "blur(10px)",
+        border: "1px solid rgba(255,255,255,0.12)",
+        borderRadius: 100, padding: "6px 13px",
+        color: "rgba(255,255,255,0.55)", fontSize: 11, fontWeight: 700,
+        letterSpacing: "0.06em",
+      }}>
+        addme.app
+      </div>
 
       {/* Content — pinned to bottom */}
       <div style={{
@@ -169,12 +196,24 @@ export default async function CardPage({ params }) {
           </div>
         )}
 
+        {/* Early Bird badge — all cards during beta get this */}
+        <div style={{
+          display: "inline-flex", alignItems: "center", gap: 5,
+          background: "rgba(251,191,36,0.15)",
+          border: "1px solid rgba(251,191,36,0.3)",
+          borderRadius: 100, padding: "4px 11px",
+          marginBottom: 10,
+        }}>
+          <span style={{ color: "#FCD34D", fontSize: 10, fontWeight: 700, letterSpacing: "0.08em" }}>✦ EARLY BIRD</span>
+        </div>
+
         {/* Name */}
         <h1 style={{
           color: "#fff", fontWeight: 800,
-          fontSize: "clamp(1.8rem, 7vw, 2.4rem)",
-          lineHeight: 1.15, marginBottom: 8,
-          textShadow: "0 2px 16px rgba(0,0,0,0.4)",
+          fontSize: "clamp(2.1rem, 8vw, 2.8rem)",
+          lineHeight: 1.1, marginBottom: 8,
+          textShadow: "0 2px 20px rgba(0,0,0,0.5)",
+          letterSpacing: "-0.01em",
         }}>
           {displayName}
         </h1>
@@ -182,11 +221,15 @@ export default async function CardPage({ params }) {
         {/* Bio */}
         {card.bio && (
           <p style={{
-            color: "rgba(255,255,255,0.78)",
-            fontSize: 15, lineHeight: 1.6,
-            marginBottom: 26,
+            color: "rgba(255,255,255,0.8)",
+            fontSize: 15, lineHeight: 1.65,
+            marginBottom: 24,
             textShadow: "0 1px 8px rgba(0,0,0,0.35)",
             maxWidth: 320,
+            display: "-webkit-box",
+            WebkitLineClamp: 3,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
           }}>
             {card.bio}
           </p>
@@ -203,7 +246,7 @@ export default async function CardPage({ params }) {
               background: "#25D366",
               color: "#fff", borderRadius: 20,
               padding: "18px 0", fontWeight: 700, fontSize: 17,
-              marginBottom: 12,
+              marginBottom: 10,
               boxShadow: "0 8px 32px rgba(37,211,102,0.5)",
               textDecoration: "none",
             }}
@@ -213,21 +256,39 @@ export default async function CardPage({ params }) {
           </a>
         )}
 
-        {/* Share button */}
-        <ShareButton url={cardUrl} name={displayName} />
+        {/* Social proof — only show when views are meaningful */}
+        {prevViews >= 5 && (
+          <p style={{
+            fontSize: 12, color: "rgba(255,255,255,0.38)",
+            marginBottom: 10, textAlign: "center",
+            letterSpacing: "0.02em",
+          }}>
+            👁 {prevViews.toLocaleString()} {prevViews === 1 ? "person" : "people"} already checked this card
+          </p>
+        )}
 
-        {/* Glass growth CTA */}
-        <Link href="/create" style={{
-          display: "flex", alignItems: "center", justifyContent: "center",
-          background: "rgba(255,255,255,0.14)",
-          backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
-          border: "1px solid rgba(255,255,255,0.22)",
-          color: "#fff", borderRadius: 20,
-          padding: "15px 0", fontWeight: 600, fontSize: 15,
-          marginBottom: 20, textDecoration: "none",
-        }}>
-          ✨ Create your own card — free
-        </Link>
+        {/* Bottom row — hide branding hides the AddMe CTA, keeps share button */}
+        {card.hide_branding ? (
+          <div style={{ marginBottom: 20 }}>
+            <ShareButton url={cardUrl} name={displayName} />
+          </div>
+        ) : (
+          <div style={{ display: "flex", gap: 10, marginBottom: 20 }}>
+            <Link href={`/?from=card&creator=${encodeURIComponent(displayName)}`} style={{
+              flex: 1,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              background: "rgba(255,255,255,0.09)",
+              backdropFilter: "blur(14px)", WebkitBackdropFilter: "blur(14px)",
+              border: "1px solid rgba(255,255,255,0.14)",
+              color: "rgba(255,255,255,0.7)", borderRadius: 20,
+              padding: "15px 0", fontWeight: 500, fontSize: 14,
+              textDecoration: "none",
+            }}>
+              Create your own card
+            </Link>
+            <ShareButton url={cardUrl} name={displayName} compact />
+          </div>
+        )}
 
         {/* Edit / Find */}
         <p style={{ textAlign: "center", fontSize: 12, color: "rgba(255,255,255,0.35)" }}>
@@ -246,8 +307,9 @@ export default async function CardPage({ params }) {
         position: "relative", zIndex: 10,
         textAlign: "center", padding: "12px 0 20px",
         fontSize: 11, color: "rgba(255,255,255,0.18)",
+        letterSpacing: "0.06em",
       }}>
-        Made with SimoForge ⚡
+        © ADDME
       </footer>
     </main>
   );

@@ -93,6 +93,23 @@ a, button { touch-action: manipulation; } /* removes 300ms tap delay on Android 
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #EC4899; }
 
+/* ── Shimmer skeleton animation ──────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--bg-card) 25%,
+    var(--bg-subtle) 50%,
+    var(--bg-card) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
 /* ── Utilities ───────────────────────────────────────────── */
 @layer utilities {
   .text-balance { text-wrap: balance; }
