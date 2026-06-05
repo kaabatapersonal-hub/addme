@@ -305,13 +305,25 @@ export default function EditPage({ params }) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-5 text-center" style={{ background: "#080808" }}>
         <div className="text-5xl mb-4">✅</div>
-        <h1 className="font-heading text-2xl font-bold mb-2" style={{ color: "var(--fg)" }}>Card updated!</h1>
-        <p className="text-sm mb-8" style={{ color: "var(--fg-muted)" }}>Your changes are live.</p>
+        <h1 className="font-heading text-2xl font-bold mb-2" style={{ color: "#fff" }}>Card updated!</h1>
+        <p className="text-sm mb-2" style={{ color: "#94A3B8" }}>Your changes have been saved.</p>
+        <p className="text-xs mb-8 px-4" style={{ color: "rgba(255,255,255,0.3)", lineHeight: 1.6 }}>
+          Tap "View my card" to see the latest version. If your old info still shows, pull down to refresh the page.
+        </p>
         <div className="flex flex-col gap-3 w-full max-w-xs">
-          <Link href={`/${username}`} className="w-full py-3.5 rounded-xl font-semibold text-white text-sm text-center transition-all" style={{ background: "#EC4899" }}>
-            View my card
-          </Link>
-          <button onClick={() => setSaved(false)} className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all" style={{ background: "rgba(255,255,255,0.06)", color: "#94A3B8", border: "1px solid rgba(255,255,255,0.08)" }}>
+          {/* Use <a> not <Link> so the browser does a full reload — avoids showing a cached version */}
+          <a
+            href={`/${username}`}
+            className="w-full py-3.5 rounded-xl font-semibold text-white text-sm text-center transition-all block"
+            style={{ background: "#EC4899", boxShadow: "0 6px 24px rgba(236,72,153,0.35)", textDecoration: "none" }}
+          >
+            View my card →
+          </a>
+          <button
+            onClick={() => setSaved(false)}
+            className="w-full py-3.5 rounded-xl font-semibold text-sm transition-all"
+            style={{ background: "rgba(255,255,255,0.06)", color: "#94A3B8", border: "1px solid rgba(255,255,255,0.08)" }}
+          >
             Edit again
           </button>
         </div>
@@ -440,7 +452,15 @@ export default function EditPage({ params }) {
               boxShadow: saving || !name.trim() ? "none" : "0 6px 24px rgba(236,72,153,0.32)",
             }}
           >
-            {saving ? "Saving..." : "Save changes"}
+            {saving ? (
+            <span className="flex items-center justify-center gap-2">
+              <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+              </svg>
+              Saving your changes...
+            </span>
+          ) : "Save changes"}
           </button>
 
           {/* ── Danger zone ──────────────────────────────────── */}

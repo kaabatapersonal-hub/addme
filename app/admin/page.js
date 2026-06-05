@@ -156,7 +156,7 @@ function CardRow({ card, adminKey, onUpdate, onDelete }) {
           <select
             value={promWeeks}
             onChange={(e) => setPromWeeks(Number(e.target.value))}
-            className="rounded-xl text-xs px-2 py-1.5 outline-none"
+            className="rounded-xl px-2 py-1.5 outline-none"
             style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.6)" }}
           >
             {WEEK_OPTIONS.map((o) => (
@@ -181,7 +181,7 @@ function CardRow({ card, adminKey, onUpdate, onDelete }) {
           <select
             value={boostAmt}
             onChange={(e) => setBoostAmt(Number(e.target.value))}
-            className="rounded-xl text-xs px-2 py-1.5 outline-none"
+            className="rounded-xl px-2 py-1.5 outline-none"
             style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)", color: "rgba(255,255,255,0.6)" }}
           >
             {[10, 25, 50, 100, 250, 500].map((n) => (

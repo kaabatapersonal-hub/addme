@@ -57,6 +57,16 @@ body {
   transition: background-color 0.25s ease, color 0.2s ease;
 }
 
+/* ── iOS Safari auto-zoom prevention ────────────────────── */
+/* Safari zooms the page whenever a focused element has font-size < 16px.
+   This rule forces all inputs/selects/textareas to 16px globally so that
+   never happens, regardless of which CSS class they use. */
+input,
+select,
+textarea {
+  font-size: 16px;
+}
+
 /* ── Input utility class ─────────────────────────────────── */
 .addme-input {
   width: 100%;
