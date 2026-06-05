@@ -124,6 +124,17 @@ export default function EditPage({ params }) {
   async function handleImage(e) {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    const ALLOWED = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
+    if (!ALLOWED.includes(file.type)) {
+      alert("Please choose a JPEG, PNG, WebP or GIF image.");
+      return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+      alert("Image must be smaller than 15 MB.");
+      return;
+    }
+
     try {
       const compressed = await imageCompression(file, {
         maxSizeMB: 0.3,
@@ -147,16 +158,30 @@ export default function EditPage({ params }) {
     setSaveError(null);
     try {
       let imageUrl = card.image_url;
+
       if (imageFile) {
-        const ext = imageFile.type === "image/png" ? "png" : "jpg";
+        // Delete the old image first (any extension) to avoid orphaned files
+        if (card.image_url) {
+          const oldExt = card.image_url.includes(".png") ? "png"
+            : card.image_url.includes(".webp") ? "webp" : "jpg";
+          await supabase.storage.from("card-images").remove([`${username}.${oldExt}`]);
+        }
+
+        // Upload new image
+        const ext = imageFile.type === "image/png" ? "png"
+          : imageFile.type === "image/webp" ? "webp" : "jpg";
         const path = `${username}.${ext}`;
         await supabase.storage
           .from("card-images")
           .upload(path, imageFile, { contentType: imageFile.type, upsert: true });
+
         const { data: urlData } = supabase.storage
           .from("card-images")
           .getPublicUrl(path);
-        imageUrl = urlData?.publicUrl ?? imageUrl;
+
+        // Append timestamp so browsers and CDN don't serve the cached old photo
+        const base = urlData?.publicUrl ?? imageUrl;
+        imageUrl = `${base}?t=${Date.now()}`;
       }
 
       const { error } = await supabase

@@ -1208,7 +1208,8 @@ function Step5({ details, cardType, mode, templateId, username, isPublic, imageP
         const { data: urlData } = supabase.storage
           .from("card-images")
           .getPublicUrl(path);
-        imageUrl = urlData?.publicUrl ?? null;
+        // Append timestamp so CDN always serves the freshly uploaded file
+        imageUrl = urlData?.publicUrl ? `${urlData.publicUrl}?t=${Date.now()}` : null;
       }
 
       // Retry with a new username on conflict (duplicate)
