@@ -5,22 +5,7 @@ import Link from "next/link";
 import imageCompression from "browser-image-compression";
 import { supabase } from "@/lib/supabase";
 import { premadeBios } from "@/data/bios";
-
-function convertPhone(raw) {
-  let n = raw.replace(/[\s\-\(\)\.]/g, "");
-  if (n.startsWith("+233")) n = n.slice(1);
-  else if (n.startsWith("0")) n = "233" + n.slice(1);
-  return n;
-}
-
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
+import { convertPhone, shuffleArray } from "@/lib/utils";
 
 const FREE_TEMPLATES = [
   { id: "classic-dark", name: "Classic Dark" },

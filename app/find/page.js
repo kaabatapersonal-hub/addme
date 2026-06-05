@@ -3,13 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-
-function convertPhone(raw) {
-  let n = raw.replace(/[\s\-\(\)\.]/g, "");
-  if (n.startsWith("+233")) n = n.slice(1);
-  else if (n.startsWith("0")) n = "233" + n.slice(1);
-  return n;
-}
+import { convertPhone } from "@/lib/utils";
 
 
 export default function FindPage() {

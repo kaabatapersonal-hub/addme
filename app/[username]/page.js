@@ -1,14 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
 import { ShareButton } from "@/components/ShareButton";
 import { getMilestoneHit, sendViewMilestoneNotification } from "@/lib/notify";
-
-function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
-}
+import { getServerSupabase } from "@/lib/supabase-server";
 
 // Properly converts Ghanaian phone numbers to wa.me format
 function convertForWa(raw) {
@@ -19,7 +12,7 @@ function convertForWa(raw) {
 }
 
 export async function generateMetadata({ params }) {
-  const supabase = getSupabase();
+  const supabase = getServerSupabase();
   const { data: card } = await supabase
     .from("cards")
     .select("name, bio, image_url, type")
@@ -73,7 +66,7 @@ function NotFound() {
 
 export default async function CardPage({ params }) {
   const { username } = params;
-  const supabase = getSupabase();
+  const supabase = getServerSupabase();
 
   const { data: card, error } = await supabase
     .from("cards")

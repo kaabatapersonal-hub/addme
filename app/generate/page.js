@@ -4,19 +4,9 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { premadeBios } from "@/data/bios";
+import { convertPhone, isValidPhone, shuffleArray } from "@/lib/utils";
 
 // ─── utilities ────────────────────────────────────────────────────────────────
-
-function convertPhone(raw) {
-  let n = raw.replace(/[\s\-\(\)\.]/g, "");
-  if (n.startsWith("+233")) n = n.slice(1);
-  else if (n.startsWith("0")) n = "233" + n.slice(1);
-  return n;
-}
-
-function isValidPhone(converted) {
-  return /^233\d{9}$/.test(converted);
-}
 
 function toThirdPerson(text) {
   return text
@@ -34,14 +24,6 @@ function toThirdPerson(text) {
     .replace(/\bmyself\b/g, "themselves");
 }
 
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 // ─── guide steps data ─────────────────────────────────────────────────────────
 

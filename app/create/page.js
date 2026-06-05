@@ -6,6 +6,7 @@ import Link from "next/link";
 import imageCompression from "browser-image-compression";
 import { supabase } from "@/lib/supabase";
 import { premadeBios } from "@/data/bios";
+import { convertPhone, shuffleArray } from "@/lib/utils";
 import CardPreview from "@/components/CardPreview";
 
 // ─── templates ────────────────────────────────────────────────────────────────
@@ -112,26 +113,10 @@ const TEMPLATES = [
 ];
 
 // ─── feature flags ────────────────────────────────────────────────────────────
-// Set to false when ready to charge for premium templates
-const UNLOCK_PREMIUM = true;
+// Set NEXT_PUBLIC_UNLOCK_PREMIUM=false in env to re-gate premium templates
+const UNLOCK_PREMIUM = process.env.NEXT_PUBLIC_UNLOCK_PREMIUM !== "false";
 
 // ─── helpers ──────────────────────────────────────────────────────────────────
-
-function convertPhone(raw) {
-  let n = (raw || "").replace(/[\s\-\(\)\.]/g, "");
-  if (n.startsWith("+233")) n = n.slice(1);
-  else if (n.startsWith("0")) n = "233" + n.slice(1);
-  return n;
-}
-
-function shuffleArray(arr) {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
 function generateUsername(name) {
   const base = (name || "user")
@@ -331,7 +316,17 @@ function ImageUpload({ label = "Profile picture", preview, onChange }) {
   async function handleFile(e) {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (!file.type.startsWith("image/")) return;
+
+    const ALLOWED = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
+    if (!ALLOWED.includes(file.type)) {
+      alert("Please choose a JPEG, PNG, WebP or GIF image.");
+      return;
+    }
+    if (file.size > 15 * 1024 * 1024) {
+      alert("Image must be smaller than 15 MB. Please choose a smaller photo.");
+      return;
+    }
+
     try {
       const compressed = await imageCompression(file, {
         maxSizeMB: 0.3,
@@ -537,10 +532,40 @@ function UsernameField({ value, status, onChange }) {
 
 // ─── step 3 — personal ────────────────────────────────────────────────────────
 
-function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus, onChangeUsername }) {
+function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus, onChangeUsername, onPhoneCheck }) {
   function set(field, val) {
     onChange({ ...details, [field]: val });
   }
+
+  const [phoneStatus, setPhoneStatus] = useState("idle"); // idle | checking | ok | limit
+  const [existingCards, setExistingCards] = useState([]);
+  const phoneTimerRef = useRef(null);
+  const onPhoneCheckRef = useRef(onPhoneCheck);
+  useEffect(() => { onPhoneCheckRef.current = onPhoneCheck; });
+
+  useEffect(() => {
+    clearTimeout(phoneTimerRef.current);
+    const normalized = convertPhone(details.phone);
+    if (normalized.length < 10) {
+      setPhoneStatus("idle");
+      setExistingCards([]);
+      onPhoneCheckRef.current(false, []);
+      return;
+    }
+    setPhoneStatus("checking");
+    phoneTimerRef.current = setTimeout(async () => {
+      const { data } = await supabase
+        .from("cards")
+        .select("username, name")
+        .eq("phone", normalized);
+      const cards = data || [];
+      const atLimit = cards.length >= 2;
+      setExistingCards(cards);
+      setPhoneStatus(atLimit ? "limit" : "ok");
+      onPhoneCheckRef.current(atLimit, cards);
+    }, 650);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [details.phone]);
 
   return (
     <div className="flex flex-col gap-5">
@@ -580,13 +605,75 @@ function Step3Personal({ mode, details, onChange, usernameInput, usernameStatus,
         <label className="block text-sm font-medium mb-2" style={{ color: "var(--fg-muted)" }}>
           WhatsApp number
         </label>
-        <input
-          className={inputCls}
-          type="tel"
-          placeholder="0257 653 283 or +233257653283"
-          value={details.phone}
-          onChange={(e) => set("phone", e.target.value)}
-        />
+
+        {/* Input with live status indicator */}
+        <div className="relative">
+          <input
+            className={inputCls}
+            type="tel"
+            placeholder="0257 653 283 or +233257653283"
+            value={details.phone}
+            onChange={(e) => set("phone", e.target.value)}
+            style={{ paddingRight: 44 }}
+          />
+          <div className="absolute right-4 inset-y-0 flex items-center">
+            {phoneStatus === "checking" && (
+              <div className="w-3.5 h-3.5 rounded-full border-2 border-[#EC4899] border-t-transparent animate-spin" />
+            )}
+            {phoneStatus === "ok" && (
+              <span className="text-base font-bold" style={{ color: "#25D366" }}>✓</span>
+            )}
+            {phoneStatus === "limit" && (
+              <span className="text-base font-bold" style={{ color: "#f87171" }}>✗</span>
+            )}
+          </div>
+        </div>
+
+        {/* Privacy note — shown when no issue */}
+        {(phoneStatus === "idle" || phoneStatus === "checking" || phoneStatus === "ok") && (
+          <p className="text-[11px] mt-2" style={{ color: "var(--fg-dim)" }}>
+            🔒 Only used to generate your WhatsApp link — never shared or sold.
+          </p>
+        )}
+
+        {/* Limit reached — show existing cards with delete links */}
+        {phoneStatus === "limit" && (
+          <div className="mt-3 rounded-2xl overflow-hidden"
+            style={{ border: "1px solid rgba(239,68,68,0.25)", background: "rgba(239,68,68,0.06)" }}>
+            <div className="px-4 pt-4 pb-3">
+              <p className="font-bold text-[13px] mb-1" style={{ color: "#f87171" }}>
+                ⚠️ You already have 2 cards with this number
+              </p>
+              <p className="text-[12px] leading-relaxed" style={{ color: "var(--fg-muted)" }}>
+                Delete one of your existing cards to free up a slot, then come back to create a new one.
+              </p>
+            </div>
+            <div className="flex flex-col divide-y" style={{ borderTop: "1px solid rgba(239,68,68,0.15)" }}>
+              {existingCards.map((card) => (
+                <a
+                  key={card.username}
+                  href={`/edit/${card.username}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between px-4 py-3 transition-opacity hover:opacity-70"
+                  style={{ textDecoration: "none" }}
+                >
+                  <div>
+                    <p className="font-semibold text-[13px]" style={{ color: "var(--fg)" }}>
+                      {card.name || card.username}
+                    </p>
+                    <p className="text-[11px] mt-0.5" style={{ color: "var(--fg-dim)" }}>
+                      addme.app/{card.username}
+                    </p>
+                  </div>
+                  <span className="text-[12px] font-bold ml-3 flex-shrink-0" style={{ color: "#f87171" }}>
+                    Delete →
+                  </span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Second phone — business premium */}
@@ -1095,11 +1182,11 @@ function Step5({ details, cardType, mode, templateId, username, isPublic, imageP
       let finalUsername = username;
       for (let attempt = 0; attempt < 3; attempt++) {
         const cardData = {
-          username: finalUsername,
+          username: finalUsername.trim(),
           type: cardType,
           mode: cardType === "personal" ? mode : "group",
-          name,
-          bio,
+          name: name?.trim() || null,
+          bio: bio?.trim() || null,
           phone: convertPhone(details.phone) || null,
           image_url: imageUrl,
           image_position: details.imagePosition || "center",
@@ -1456,6 +1543,7 @@ export default function CreatePage() {
   const [username, setUsername] = useState("");
   const [isPublic, setIsPublic] = useState(true);
   const [hideBranding, setHideBranding] = useState(false);
+  const [phoneAtLimit, setPhoneAtLimit] = useState(false);
   const [usernameInput, setUsernameInput] = useState("");
   const [usernameStatus, setUsernameStatus] = useState("idle");
   const usernameTimerRef = useRef(null);
@@ -1532,7 +1620,7 @@ export default function CreatePage() {
       const uOk = usernameStatus === "available";
       if (cardType === "group")
         return details.groupName.trim() !== "" && details.inviteLink.trim() !== "" && uOk;
-      return details.name.trim() !== "" && details.phone.trim() !== "" && uOk;
+      return details.name.trim() !== "" && details.phone.trim() !== "" && uOk && !phoneAtLimit;
     }
     return true;
   }
@@ -1609,6 +1697,7 @@ export default function CreatePage() {
                   usernameInput={usernameInput}
                   usernameStatus={usernameStatus}
                   onChangeUsername={handleUsernameChange}
+                  onPhoneCheck={(atLimit) => setPhoneAtLimit(atLimit)}
                 />
               )}
               {step === 3 && cardType === "group" && (

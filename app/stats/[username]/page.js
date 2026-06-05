@@ -1,15 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
 import Link from "next/link";
-
-function getSupabase() {
-  return createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-  );
-}
+import { supabase } from "@/lib/supabase";
 
 const MILESTONES = [10, 50, 100, 500, 1000, 5000, 10000];
 
@@ -114,7 +107,7 @@ export default function StatsPage({ params }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    getSupabase()
+    supabase
       .from("cards")
       .select("username, name, bio, image_url, image_position, views, created_at, type")
       .eq("username", username)
