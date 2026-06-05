@@ -271,7 +271,7 @@ export default function StatsPage({ params }) {
         </div>
 
         <p style={{ textAlign: "center", color: "rgba(255,255,255,0.15)", fontSize: 11, marginTop: 32, letterSpacing: "0.05em" }}>
-          © AddMe · addme.app
+          © AddMe · Made with SimoForge ⚡
         </p>
       </div>
     </main>

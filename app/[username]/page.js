@@ -309,7 +309,7 @@ export default async function CardPage({ params }) {
         fontSize: 11, color: "rgba(255,255,255,0.18)",
         letterSpacing: "0.06em",
       }}>
-        © ADDME
+        © AddMe · Made with SimoForge ⚡
       </footer>
     </main>
   );

@@ -283,7 +283,7 @@ export default function EditPage({ params }) {
           </p>
         </div>
         <footer className="text-center py-6 text-xs" style={{ color: "rgba(148,163,184,0.3)" }}>
-          Made with SimoForge ⚡
+          © AddMe · Made with SimoForge ⚡
         </footer>
       </main>
     );

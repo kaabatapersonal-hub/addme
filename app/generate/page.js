@@ -646,7 +646,7 @@ export default function GeneratePage() {
       </div>
 
       <footer className="text-center py-6 text-xs" style={{ color: "var(--fg-dim)" }}>
-        Made with SimoForge ⚡
+        © AddMe · Made with SimoForge ⚡
       </footer>
     </main>
   );

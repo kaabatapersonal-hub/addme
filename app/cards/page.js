@@ -302,7 +302,7 @@ export default function CardsPage() {
       </div>
 
       <footer className="text-center py-6 text-xs" style={{ color: "var(--fg-dim)", letterSpacing: "0.05em" }}>
-        © AddMe · Made in Ghana 🇬🇭
+        © AddMe · Made with SimoForge ⚡
       </footer>
     </main>
   );

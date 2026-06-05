@@ -451,7 +451,7 @@ export default function HomePage() {
       </section>
 
       <footer className="text-center py-8 text-xs" style={{ color: "var(--fg-dim)", letterSpacing: "0.05em" }}>
-        © AddMe · Made in Ghana 🇬🇭
+        © AddMe · Made with SimoForge ⚡
       </footer>
     </main>
   );
